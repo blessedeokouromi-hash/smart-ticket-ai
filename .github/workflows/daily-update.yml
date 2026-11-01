@@ -1,5 +1,6 @@
 name: Daily Matches Update
-
+permissions:
+  contents: write
 on:
   schedule:
     - cron: '0 5 * * *'   # Runs every day at 5:00 AM UTC
