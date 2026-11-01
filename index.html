@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Predict AI</title>
+<style>
+  :root {
+    --bg: #0b1120; --card: #1e293b; --border: #334155; --text: #e2e8f0;
+    --muted: #94a3b8; --accent: #38bdf8; --green: #4ade80; --yellow: #facc15;
+    --red: #f87171; --purple: #a78bfa;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  header { background: linear-gradient(135deg, #0f172a, #1e3a5f); padding: 1.2rem 1rem; border-bottom: 2px solid var(--accent); text-align: center; }
+  header h1 { font-size: 1.4rem; color: var(--accent); }
+  header p { color: var(--muted); font-size: 0.85rem; margin-top: 0.25rem; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0.8rem; }
+  .info-box { background: #1e293b; border-left: 4px solid #8b5cf6; padding: 0.6rem 0.8rem; margin: 0.7rem 0; font-size: 0.8rem; color: var(--muted); }
+  .ai-section { background: linear-gradient(145deg, #1a1030, #1e1a3a); border: 2px solid #8b5cf6; border-radius: 14px; padding: 1rem; margin: 0.9rem 0; }
+  .ai-section h2 { color: #c4b5fd; font-size: 1.1rem; margin-bottom: 0.3rem; }
+  .ai-section .subtitle { color: var(--muted); font-size: 0.78rem; margin-bottom: 0.7rem; }
+  .ai-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; margin-bottom: 0.6rem; }
+  @media (max-width: 500px) { .ai-controls { grid-template-columns: 1fr; } }
+  .ai-field label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 0.2rem; }
+  .ai-field input, .ai-field select { width: 100%; padding: 0.45rem; border-radius: 8px; border: 1px solid #5b4a9e; background: #0f0a1e; color: var(--text); font-size: 0.95rem; font-weight: 600; }
+  button { background: var(--accent); color: #0f172a; border: none; padding: 0.45rem 0.9rem; border-radius: 8px; font-weight: 700; cursor: pointer; }
+  button.ai { background: linear-gradient(90deg, #8b5cf6, #6366f1); color: white; width: 100%; margin-top: 0.5rem; padding: 0.6rem; font-size: 1rem; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .status { text-align: center; padding: 0.5rem; color: var(--muted); font-size: 0.85rem; }
+  .status.error { color: var(--red); }
+  .status.success { color: var(--green); }
+  .limit-box { background: #1e1b4b; border-radius: 8px; padding: 0.5rem; font-size: 0.8rem; color: #c4b5fd; margin-bottom: 0.6rem; text-align: center; }
+  .limit-box.premium { background: #064e3b; color: #4ade80; }
+  .combo-card { background: #0f0a1e; border: 1px solid #4c1d95; border-radius: 10px; padding: 0.75rem; margin-bottom: 0.6rem; }
+  .combo-header { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.4rem; }
+  .combo-odds { font-size: 1.2rem; font-weight: 800; color: #c4b5fd; }
+  .combo-diff { font-size: 0.78rem; color: var(--muted); }
+  .combo-legs { font-size: 0.82rem; max-height: 220px; overflow-y: auto; }
+  .combo-leg { padding: 0.25rem 0; border-bottom: 1px solid #2e1065; display: flex; justify-content: space-between; gap: 0.4rem; }
+  .ticket-section { background: linear-gradient(145deg, #0f1c2e, #1a2740); border: 2px solid var(--green); border-radius: 14px; padding: 0.9rem; margin: 0.9rem 0; }
+  .ticket-section h2 { color: var(--green); font-size: 1.05rem; }
+  .ticket-list { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.5rem; }
+  .ticket-item { display: grid; grid-template-columns: 26px 1fr auto auto; gap: 0.35rem; align-items: center; background: #0b1220; border-radius: 8px; padding: 0.4rem 0.55rem; font-size: 0.82rem; border-left: 3px solid var(--green); }
+  .ticket-item .num { color: var(--muted); font-weight: 600; }
+  .ticket-item .teams { font-weight: 600; }
+  .ticket-item .league { font-size: 0.7rem; color: var(--muted); }
+  .ticket-item .pick { font-weight: 700; color: var(--green); }
+  .ticket-item .prob { color: var(--yellow); font-weight: 600; }
+  .match-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 0.8rem; margin-bottom: 0.55rem; }
+  .match-header { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.35rem; }
+  .teams { font-size: 0.95rem; font-weight: 600; }
+  .meta { color: var(--muted); font-size: 0.72rem; }
+  .score { font-size: 1.1rem; font-weight: 700; color: var(--accent); }
+  .live { color: var(--green); font-weight: 700; font-size: 0.7rem; }
+  .finished { color: var(--red); font-size: 0.7rem; }
+  .section-label { font-size: 0.7rem; color: var(--muted); margin: 0.4rem 0 0.2rem; text-transform: uppercase; }
+  .best-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.3rem; }
+  .best-box { background: #0f172a; border: 1px solid #2d3a4f; border-radius: 8px; padding: 0.4rem; text-align: center; }
+  .best-box.top1 { border-color: #4ade80; }
+  .best-box.fh { border-color: #f59e0b; }
+  .best-box .rank { font-size: 0.6rem; color: var(--muted); }
+  .best-box .market { font-weight: 700; font-size: 0.85rem; }
+  .best-box .prob { font-size: 0.75rem; color: var(--green); }
+  .other-preds { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 0.25rem; margin-top: 0.3rem; }
+  .pred { background: #0f172a; border-radius: 6px; padding: 0.3rem; text-align: center; }
+  .pred .label { font-size: 0.6rem; color: var(--muted); }
+  .pred .val { font-weight: 700; font-size: 0.82rem; }
+  .gg-yes { color: var(--green); } .gg-no { color: var(--red); }
+  .over { color: var(--yellow); } .under { color: var(--purple); }
+  .league-title { color: var(--accent); margin: 1rem 0 0.4rem; font-size: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.2rem; }
+  footer { text-align: center; padding: 1.2rem; color: var(--muted); font-size: 0.75rem; border-top: 1px solid var(--border); margin-top: 1.5rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Smart Predict AI</h1>
+  <p>Daily Football Predictions + AI Ticket Builder</p>
+</header>
+
+<div class="container">
+  <div class="info-box">
+    Free users: 2 AI builds per day • Data updates automatically every day
+  </div>
+
+  <div class="ai-section">
+    <h2>🤖 AI Ticket Builder</h2>
+    <div class="subtitle">Choose market type, number of games and target odds</div>
+    <div id="limitBox" class="limit-box">Checking limit...</div>
+
+    <div class="ai-controls">
+      <div class="ai-field">
+        <label>Market Type</label>
+        <select id="marketType">
+          <option value="any">Any Market (Best Mix)</option>
+          <option value="over15">Over 1.5 only</option>
+          <option value="over25">Over 2.5 only</option>
+          <option value="gg">GG Yes only</option>
+          <option value="1x">1X only</option>
+          <option value="x2">X2 only</option>
+          <option value="home">Home Win only</option>
+          <option value="away">Away Win only</option>
+          <option value="1h_over05">1H Over 0.5 only</option>
+          <option value="1h_over15">1H Over 1.5 only</option>
+          <option value="1h_btts">1H BTTS only</option>
+          <option value="1h_only">Any First Half</option>
+          <option value="ft_only">Any Full Time</option>
+        </select>
+      </div>
+      <div class="ai-field">
+        <label>Number of Games</label>
+        <input type="number" id="numLegs" value="8" min="2" max="15">
+      </div>
+      <div class="ai-field">
+        <label>Target Odds</label>
+        <input type="number" id="targetOdds" value="50" min="1.5" max="10000">
+      </div>
+      <div class="ai-field">
+        <label>Min Probability %</label>
+        <input type="number" id="minProb" value="55" min="45" max="80">
+      </div>
+    </div>
+
+    <button class="ai" id="buildBtn" onclick="buildTicket()">Build My Ticket</button>
+    <div id="aiStatus" class="status"></div>
+    <div id="aiResults"></div>
+  </div>
+
+  <div id="status" class="status">Loading today's matches...</div>
+
+  <div id="ticketSection" class="ticket-section" style="display:none;">
+    <h2>🎟️ Best Ticket Today</h2>
+    <div id="ticketList" class="ticket-list"></div>
+  </div>
+
+  <div id="games"></div>
+</div>
+
+<footer>
+  Smart Predict AI • Auto-updated daily • Free: 2 AI builds per day
+</footer>
+
+<script>
+const FREE_LIMIT = 2;
+let allSelections = [];
+
+function isPremium() {
+  return localStorage.getItem('smart_premium') === 'true';
+}
+function getUsage() {
+  const today = new Date().toISOString().slice(0,10);
+  const data = JSON.parse(localStorage.getItem('smart_usage') || '{}');
+  return data.date === today ? (data.count || 0) : 0;
+}
+function addUsage() {
+  const today = new Date().toISOString().slice(0,10);
+  localStorage.setItem('smart_usage', JSON.stringify({ date: today, count: getUsage() + 1 }));
+  updateLimit();
+}
+function updateLimit() {
+  const box = document.getElementById('limitBox');
+  const btn = document.getElementById('buildBtn');
+  if (isPremium()) {
+    box.className = 'limit-box premium';
+    box.textContent = 'Premium: Unlimited AI builds';
+    btn.disabled = false;
+  } else {
+    const left = Math.max(0, FREE_LIMIT - getUsage());
+    box.className = 'limit-box';
+    box.textContent = `Free plan: \( {left} AI build \){left !== 1 ? 's' : ''} remaining today`;
+    btn.disabled = left <= 0;
+  }
+}
+
+function probToOdds(p) {
+  if (p <= 0.04) return 18;
+  if (p >= 0.93) return 1.10;
+  return Math.round((1/p)*100)/100;
+}
+
+async function loadData() {
+  try {
+    const res = await fetch('matches.json?t=' + Date.now());
+    if (!res.ok) throw new Error('Data not ready yet');
+    const data = await res.json();
+
+    document.getElementById('status').textContent = 
+      `${data.totalMatches} matches • ${data.upcoming} upcoming • Updated ${new Date(data.generatedAt).toLocaleString()}`;
+    document.getElementById('status').className = 'status success';
+
+    allSelections = [];
+    const upcoming = data.matches.filter(m => m.isUpcoming);
+
+    upcoming.forEach(m => {
+      (m.prediction?.all || []).forEach(c => {
+        allSelections.push({
+          matchId: m.id, home: m.home, away: m.away,
+          country: m.country, league: m.league, time: m.time,
+          pick: c.pick, prob: c.prob, type: c.type, key: c.key
+        });
+      });
+    });
+
+    // Best Ticket
+    const best = [];
+    upcoming.forEach(m => {
+      const top = m.prediction?.top3?.[0];
+      if (top && top.prob >= 0.58) {
+        best.push({ home: m.home, away: m.away, country: m.country, league: m.league, time: m.time, pick: top.pick, prob: top.prob });
+      }
+    });
+    best.sort((a,b) => b.prob - a.prob);
+    const top15 = best.slice(0,15);
+
+    if (top15.length) {
+      let html = '';
+      top15.forEach((t,i) => {
+        html += `<div class="ticket-item">
+          <div class="num">${i+1}.</div>
+          <div class="match-info"><div class="teams">${t.home} vs ${t.away}</div>
+          <div class="league">${t.country} • ${t.league} • ${t.time}</div></div>
+          <div class="pick">${t.pick}</div>
+          <div class="prob">${(t.prob*100).toFixed(0)}%</div>
+        </div>`;
+      });
+      document.getElementById('ticketList').innerHTML = html;
+      document.getElementById('ticketSection').style.display = 'block';
+    }
+
+    // Render matches
+    const byLeague = {};
+    data.matches.sort((a,b) => (b.isUpcoming - a.isUpcoming) || (b.isLive - a.isLive));
+    data.matches.forEach(m => {
+      const k = `${m.country} • ${m.league}`;
+      if (!byLeague[k]) byLeague[k] = [];
+      byLeague[k].push(m);
+    });
+
+    let html = '';
+    for (const [league, list] of Object.entries(byLeague)) {
+      html += `<div class="league-title">${league}</div>`;
+      list.forEach(m => {
+        const score = (m.scoreH != null) ? `\( {m.scoreH}- \){m.scoreA}` : 'vs';
+        const badge = m.isLive ? '<span class="live">● LIVE</span>' : m.isFinished ? '<span class="finished">FT</span>' : '<span style="color:var(--accent);font-size:0.7rem;">NS</span>';
+        const p = m.prediction || {};
+        html += `<div class="match-card" style="${m.isFinished?'opacity:0.6':''}">
+          <div class="match-header">
+            <div><div class="teams">${m.home} <span style="color:var(--muted)">vs</span> ${m.away} ${badge}</div>
+            <div class="meta">${m.time} • ${m.status||''}</div></div>
+            <div class="score">${score}</div>
+          </div>
+          <div class="section-label">Full Time Top 3</div>
+          <div class="best-row">
+            ${(p.top3||[]).map((t,i)=>`<div class="best-box \( {i===0?'top1':''}"><div class="rank"># \){i+1}</div><div class="market">\( {t.pick}</div><div class="prob"> \){(t.prob*100).toFixed(0)}%</div></div>`).join('')}
+          </div>
+          <div class="section-label">First Half Top 3</div>
+          <div class="best-row">
+            \( {(p.topFH||[]).map((t,i)=>`<div class="best-box fh"><div class="rank">1H # \){i+1}</div><div class="market">\( {t.pick}</div><div class="prob"> \){(t.prob*100).toFixed(0)}%</div></div>`).join('')}
+          </div>
+          <div class="other-preds">
+            <div class="pred"><div class="label">Pred</div><div class="val" style="color:var(--accent)">${p.predScore||'-'}</div></div>
+            <div class="pred"><div class="label">BTTS</div><div class="val \( {p.btts==='Yes'?'gg-yes':'gg-no'}"> \){p.btts||'-'}</div></div>
+            <div class="pred"><div class="label">O/U 2.5</div><div class="val \( {p.ou25==='Over'?'over':'under'}"> \){p.ou25||'-'}</div></div>
+            <div class="pred"><div class="label">1X2</div><div class="val">${p.oneXtwo==='1'?'Home':p.oneXtwo==='2'?'Away':'Draw'}</div></div>
+          </div>
+        </div>`;
+      });
+    }
+    document.getElementById('games').innerHTML = html;
+
+  } catch(e) {
+    document.getElementById('status').textContent = 'Error loading data: ' + e.message;
+    document.getElementById('status').className = 'status error';
+  }
+}
+
+function buildTicket() {
+  if (!isPremium() && getUsage() >= FREE_LIMIT) {
+    document.getElementById('aiStatus').textContent = 'Daily free limit reached. Try again tomorrow.';
+    document.getElementById('aiStatus').className = 'status error';
+    return;
+  }
+
+  const target = parseFloat(document.getElementById('targetOdds').value);
+  const legs = parseInt(document.getElementById('numLegs').value) || 8;
+  const minP = (parseFloat(document.getElementById('minProb').value)||55)/100;
+  const market = document.getElementById('marketType').value;
+
+  let filtered = allSelections.filter(s => s.prob >= minP);
+  if (market === 'over15') filtered = filtered.filter(s => s.key === 'over15');
+  else if (market === 'over25') filtered = filtered.filter(s => s.key === 'over25');
+  else if (market === 'gg') filtered = filtered.filter(s => s.key === 'gg');
+  else if (market === '1x') filtered = filtered.filter(s => s.key === '1x');
+  else if (market === 'x2') filtered = filtered.filter(s => s.key === 'x2');
+  else if (market === 'home') filtered = filtered.filter(s => s.key === 'home');
+  else if (market === 'away') filtered = filtered.filter(s => s.key === 'away');
+  else if (market === '1h_over05') filtered = filtered.filter(s => s.key === '1h_over05');
+  else if (market === '1h_over15') filtered = filtered.filter(s => s.key === '1h_over15');
+  else if (market === '1h_btts') filtered = filtered.filter(s => s.key === '1h_btts');
+  else if (market === '1h_only') filtered = filtered.filter(s => s.type === '1H');
+  else if (market === 'ft_only') filtered = filtered.filter(s => s.type === 'FT');
+
+  const best = {};
+  filtered.forEach(s => {
+    if (!best[s.matchId] || s.prob > best[s.matchId].prob) best[s.matchId] = s;
+  });
+  let pool = Object.values(best).map(s => ({...s, odds: probToOdds(s.prob)})).sort((a,b)=>b.prob-a.prob);
+
+  if (pool.length < legs) {
+    document.getElementById('aiStatus').textContent = `Only ${pool.length} matches available. Reduce number of games.`;
+    document.getElementById('aiStatus').className = 'status error';
+    return;
+  }
+
+  const selected = pool.slice(0, legs);
+  let total = 1;
+  selected.forEach(s => total *= s.odds);
+  total = Math.round(total*100)/100;
+
+  if (!isPremium()) addUsage();
+
+  document.getElementById('aiStatus').textContent = 'Ticket created successfully';
+  document.getElementById('aiStatus').className = 'status success';
+
+  const legsHtml = selected.map((l,i) => `
+    <div class="combo-leg">
+      <span>${i+1}. ${l.home} vs \( {l.away} <small style="color:var(--muted)">( \){l.country} • ${l.time})</small></span>
+      <span style="color:#c4b5fd;font-weight:600">${l.pick} @ ${l.odds}</span>
+    </div>`).join('');
+
+  document.getElementById('aiResults').innerHTML = `
+    <div class="combo-card">
+      <div class="combo-header">
+        <div class="combo-odds">Total Odds: ${total}</div>
+        <div class="combo-diff">${legs} legs</div>
+      </div>
+      <div class="combo-legs">${legsHtml}</div>
+    </div>`;
+}
+
+updateLimit();
+loadData();
+</script>
+</body>
+  </html>
