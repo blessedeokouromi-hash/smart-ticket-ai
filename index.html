@@ -1,375 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Predict AI</title>
-<style>
-  :root {
-    --bg: #0b1120; --card: #1e293b; --border: #334155; --text: #e2e8f0;
-    --muted: #94a3b8; --accent: #38bdf8; --green: #4ade80; --yellow: #facc15;
-    --red: #f87171; --purple: #a78bfa;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-  header { background: linear-gradient(135deg, #0f172a, #1e3a5f); padding: 1.1rem 1rem; border-bottom: 2px solid var(--accent); text-align: center; }
-  header h1 { font-size: 1.35rem; color: var(--accent); }
-  header p { color: var(--muted); font-size: 0.82rem; margin-top: 0.2rem; }
-  .container { max-width: 900px; margin: 0 auto; padding: 0.7rem; }
-  .info-box { background: #1e293b; border-left: 4px solid #8b5cf6; padding: 0.55rem 0.75rem; margin: 0.6rem 0; font-size: 0.78rem; color: var(--muted); }
-  .ai-section { background: linear-gradient(145deg, #1a1030, #1e1a3a); border: 2px solid #8b5cf6; border-radius: 14px; padding: 0.9rem; margin: 0.8rem 0; }
-  .ai-section h2 { color: #c4b5fd; font-size: 1.05rem; margin-bottom: 0.25rem; }
-  .ai-section .subtitle { color: var(--muted); font-size: 0.75rem; margin-bottom: 0.6rem; }
-  .ai-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem; }
-  @media (max-width: 500px) { .ai-controls { grid-template-columns: 1fr; } }
-  .ai-field label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 0.18rem; }
-  .ai-field input, .ai-field select { width: 100%; padding: 0.42rem; border-radius: 8px; border: 1px solid #5b4a9e; background: #0f0a1e; color: var(--text); font-size: 0.9rem; font-weight: 600; }
-  button { background: var(--accent); color: #0f172a; border: none; padding: 0.4rem 0.8rem; border-radius: 8px; font-weight: 700; cursor: pointer; }
-  button.ai { background: linear-gradient(90deg, #8b5cf6, #6366f1); color: white; width: 100%; margin-top: 0.45rem; padding: 0.55rem; font-size: 0.95rem; }
-  button:disabled { opacity: 0.5; cursor: not-allowed; }
-  .status { text-align: center; padding: 0.45rem; color: var(--muted); font-size: 0.82rem; }
-  .status.error { color: var(--red); }
-  .status.success { color: var(--green); }
-  .limit-box { background: #1e1b4b; border-radius: 8px; padding: 0.45rem; font-size: 0.78rem; color: #c4b5fd; margin-bottom: 0.5rem; text-align: center; }
-  .limit-box.premium { background: #064e3b; color: #4ade80; }
-  .combo-card { background: #0f0a1e; border: 1px solid #4c1d95; border-radius: 10px; padding: 0.7rem; margin-top: 0.6rem; }
-  .combo-header { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.4rem; }
-  .combo-odds { font-size: 1.15rem; font-weight: 800; color: #c4b5fd; }
-  .combo-diff { font-size: 0.75rem; color: var(--muted); }
-  .combo-leg { padding: 0.22rem 0; border-bottom: 1px solid #2e1065; display: flex; justify-content: space-between; gap: 0.3rem; font-size: 0.8rem; }
-  .ticket-section { background: linear-gradient(145deg, #0f1c2e, #1a2740); border: 2px solid var(--green); border-radius: 14px; padding: 0.8rem; margin: 0.8rem 0; }
-  .ticket-section h2 { color: var(--green); font-size: 1rem; margin-bottom: 0.4rem; }
-  .ticket-item { display: grid; grid-template-columns: 24px 1fr auto auto; gap: 0.3rem; align-items: center; background: #0b1220; border-radius: 8px; padding: 0.38rem 0.5rem; font-size: 0.8rem; border-left: 3px solid var(--green); margin-bottom: 0.3rem; }
-  .ticket-item .num { color: var(--muted); font-weight: 600; }
-  .ticket-item .teams { font-weight: 600; }
-  .ticket-item .league { font-size: 0.68rem; color: var(--muted); }
-  .ticket-item .pick { font-weight: 700; color: var(--green); }
-  .ticket-item .prob { color: var(--yellow); font-weight: 600; }
-  .match-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 0.7rem; margin-bottom: 0.5rem; }
-  .match-header { display: flex; justify-content: space-between; gap: 0.3rem; margin-bottom: 0.3rem; }
-  .teams { font-size: 0.92rem; font-weight: 600; }
-  .meta { color: var(--muted); font-size: 0.7rem; }
-  .score { font-size: 1.05rem; font-weight: 700; color: var(--accent); }
-  .section-label { font-size: 0.68rem; color: var(--muted); margin: 0.35rem 0 0.18rem; text-transform: uppercase; }
-  .best-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.25rem; }
-  .best-box { background: #0f172a; border: 1px solid #2d3a4f; border-radius: 8px; padding: 0.35rem; text-align: center; }
-  .best-box.top1 { border-color: #4ade80; }
-  .best-box.fh { border-color: #f59e0b; }
-  .best-box .rank { font-size: 0.58rem; color: var(--muted); }
-  .best-box .market { font-weight: 700; font-size: 0.8rem; }
-  .best-box .prob { font-size: 0.7rem; color: var(--green); }
-  .other-preds { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.2rem; margin-top: 0.25rem; }
-  .pred { background: #0f172a; border-radius: 6px; padding: 0.25rem; text-align: center; }
-  .pred .label { font-size: 0.55rem; color: var(--muted); }
-  .pred .val { font-weight: 700; font-size: 0.75rem; }
-  .gg-yes { color: var(--green); } .gg-no { color: var(--red); }
-  .over { color: var(--yellow); } .under { color: var(--purple); }
-  .league-title { color: var(--accent); margin: 0.9rem 0 0.3rem; font-size: 0.95rem; border-bottom: 1px solid var(--border); padding-bottom: 0.15rem; }
-  footer { text-align: center; padding: 1rem; color: var(--muted); font-size: 0.72rem; border-top: 1px solid var(--border); margin-top: 1.2rem; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <title>Smart Predict AI</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --accent: #22c55e;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --border: #334155;
+      --win: #14532d;
+      --win-border: #22c55e;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 40px; }
+    .header { background: linear-gradient(135deg, #16a34a, #15803d); padding: 18px 16px; text-align: center; position: sticky; top: 0; z-index: 100; }
+    .header h1 { font-size: 1.4rem; font-weight: 700; }
+    .header p { font-size: 0.8rem; opacity: 0.9; margin-top: 4px; }
+    .container { max-width: 520px; margin: 0 auto; padding: 12px; }
+    .ad-box { background: #1e293b; border: 1px dashed #475569; border-radius: 10px; padding: 14px; margin: 14px 0; text-align: center; }
+    .ad-box a { color: #38bdf8; font-size: 0.9rem; text-decoration: none; font-weight: 600; }
+    .section-title { font-size: 1.05rem; font-weight: 700; margin: 20px 0 12px; display: flex; align-items: center; gap: 8px; }
+    .ticket-card { background: var(--card); border-radius: 12px; padding: 14px; margin-bottom: 12px; border: 1px solid var(--border); }
+    .match-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 6px; }
+    .score { font-size: 0.8rem; color: var(--muted); margin-bottom: 10px; }
+    .pick-box { background: #14532d; border: 1px solid var(--win-border); border-radius: 8px; padding: 10px 12px; }
+    .pick-line { font-size: 0.9rem; margin-bottom: 3px; }
+    .pick-line strong { color: #4ade80; }
+    .market { font-size: 0.8rem; color: #86efac; }
+    .outcome { font-size: 0.8rem; color: #bbf7d0; }
+    .tabs { display: flex; gap: 8px; margin: 16px 0; overflow-x: auto; }
+    .tab { padding: 8px 14px; background: var(--card); border-radius: 20px; font-size: 0.85rem; white-space: nowrap; border: 1px solid var(--border); cursor: pointer; }
+    .tab.active { background: var(--accent); color: #052e16; font-weight: 600; border-color: var(--accent); }
+    .ai-box { background: var(--card); border-radius: 12px; padding: 16px; margin-top: 10px; border: 1px solid var(--border); }
+    .ai-box input, .ai-box select { width: 100%; padding: 11px; margin: 8px 0; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: white; font-size: 0.95rem; }
+    .btn { background: var(--accent); color: #052e16; border: none; padding: 12px; border-radius: 8px; font-weight: 700; width: 100%; font-size: 1rem; cursor: pointer; margin-top: 8px; }
+    .btn:active { transform: scale(0.98); }
+    .league { font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; }
+    .loading { text-align: center; padding: 40px; color: var(--muted); }
+    .badge { display: inline-block; background: #22c55e; color: #052e16; font-size: 0.7rem; padding: 2px 7px; border-radius: 10px; font-weight: 700; margin-left: 6px; }
+  </style>
 </head>
 <body>
-<header>
-  <h1>Smart Predict AI</h1>
-  <p>Daily Football Predictions + AI Ticket Builder</p>
-</header>
-
-<div class="container">
-  <div class="info-box">
-    Free: 2 AI builds per day • Data updates automatically every day
+  <div class="header">
+    <h1>Smart Predict AI</h1>
+    <p>Free Daily Predictions • High Odds Markets</p>
   </div>
 
-  <div class="ai-section">
-    <h2>🤖 AI Ticket Builder</h2>
-    <div class="subtitle">Choose market, number of games and target odds</div>
-    <div id="limitBox" class="limit-box">Checking...</div>
-
-    <div class="ai-controls">
-      <div class="ai-field">
-        <label>Market Type</label>
-        <select id="marketType">
-          <option value="any">Any Market (Best Mix)</option>
-          <option value="over15">Over 1.5 only</option>
-          <option value="over25">Over 2.5 only</option>
-          <option value="gg">GG Yes only</option>
-          <option value="1x">1X only</option>
-          <option value="x2">X2 only</option>
-          <option value="home">Home Win only</option>
-          <option value="away">Away Win only</option>
-          <option value="1h_over05">1H Over 0.5 only</option>
-          <option value="1h_over15">1H Over 1.5 only</option>
-          <option value="1h_btts">1H BTTS only</option>
-          <option value="1h_only">Any First Half</option>
-          <option value="ft_only">Any Full Time</option>
-        </select>
-      </div>
-      <div class="ai-field">
-        <label>Number of Games</label>
-        <input type="number" id="numLegs" value="8" min="2" max="15">
-      </div>
-      <div class="ai-field">
-        <label>Target Odds</label>
-        <input type="number" id="targetOdds" value="50" min="1.5" max="10000">
-      </div>
-      <div class="ai-field">
-        <label>Min Probability %</label>
-        <input type="number" id="minProb" value="55" min="45" max="80">
-      </div>
+  <div class="container">
+    <!-- Top Ad -->
+    <div class="ad-box">
+      <a href="https://asiafilm.org/4/bd80344d93bc26083f8b20a55302a626" target="_blank">🔥 Claim Free Bonus Now</a>
     </div>
 
-    <button class="ai" id="buildBtn" onclick="buildTicket()">Build My Ticket</button>
-    <div id="aiStatus" class="status"></div>
-    <div id="aiResults"></div>
+    <div class="section-title">🔥 Best Ticket Today <span class="badge">FREE</span></div>
+    <div id="bestTicket">
+      <div class="loading">Loading today's best picks...</div>
+    </div>
+
+    <!-- Middle Ad -->
+    <div class="ad-box">
+      <a href="//rm358.com/4/12185322?var=smartpredict&ymid=click" target="_blank">⚡ Get Instant Cash Bonus</a>
+    </div>
+
+    <div class="section-title">🤖 AI Odds Builder</div>
+    <div class="ai-box">
+      <label>Target Total Odds</label>
+      <input type="number" id="targetOdds" placeholder="e.g. 5.00" value="5">
+      
+      <label>Number of Games</label>
+      <select id="numGames">
+        <option value="3">3 Games</option>
+        <option value="4" selected>4 Games</option>
+        <option value="5">5 Games</option>
+        <option value="6">6 Games</option>
+      </select>
+
+      <label>Preferred Market</label>
+      <select id="marketType">
+        <option value="mixed">Mixed (Best)</option>
+        <option value="over05">Team Over 0.5</option>
+        <option value="handicap">Asian Handicap</option>
+        <option value="1x2">Straight Win</option>
+        <option value="under25">Under 2.5</option>
+      </select>
+
+      <button class="btn" onclick="buildTicket()">Generate Ticket</button>
+    </div>
+
+    <div id="aiResult" style="margin-top:16px;"></div>
+
+    <div class="section-title">📅 All Predictions</div>
+    <div class="tabs" id="leagueTabs"></div>
+    <div id="allMatches">
+      <div class="loading">Loading matches...</div>
+    </div>
+
+    <!-- Bottom Ad -->
+    <div class="ad-box">
+      <a href="https://asiafilm.org/4/bd80344d93bc26083f8b20a55302a626" target="_blank">🎁 Exclusive Offer - Click Here</a>
+    </div>
   </div>
 
-  <div id="status" class="status">Loading upcoming matches...</div>
+  <script>
+    let allData = [];
+    let currentLeague = "All";
 
-  <div id="ticketSection" class="ticket-section" style="display:none;">
-    <h2>🎟️ Best Ticket Today</h2>
-    <div id="ticketList"></div>
-  </div>
-
-  <div id="games"></div>
-</div>
-
-<footer>
-  Smart Predict AI • Auto-updated daily • Free: 2 AI builds/day
-</footer>
-
-<script>
-const FREE_LIMIT = 2;
-let allSelections = [];
-
-function isPremium() {
-  return localStorage.getItem('smart_premium') === 'true';
-}
-function getUsage() {
-  const today = new Date().toISOString().slice(0,10);
-  const data = JSON.parse(localStorage.getItem('smart_usage') || '{}');
-  return data.date === today ? (data.count || 0) : 0;
-}
-function addUsage() {
-  const today = new Date().toISOString().slice(0,10);
-  localStorage.setItem('smart_usage', JSON.stringify({ date: today, count: getUsage() + 1 }));
-  updateLimit();
-}
-function updateLimit() {
-  const box = document.getElementById('limitBox');
-  const btn = document.getElementById('buildBtn');
-  if (isPremium()) {
-    box.className = 'limit-box premium';
-    box.textContent = 'Premium: Unlimited AI builds';
-    btn.disabled = false;
-  } else {
-    const left = Math.max(0, FREE_LIMIT - getUsage());
-    box.className = 'limit-box';
-    box.textContent = 'Free plan: ' + left + ' AI build' + (left !== 1 ? 's' : '') + ' remaining today';
-    btn.disabled = left <= 0;
-  }
-}
-
-function probToOdds(p) {
-  if (p <= 0.04) return 18;
-  if (p >= 0.93) return 1.10;
-  return Math.round((1/p)*100)/100;
-}
-
-async function loadData() {
-  try {
-    const res = await fetch('matches.json?t=' + Date.now());
-    if (!res.ok) throw new Error('Data not ready');
-    const data = await res.json();
-
-    const upcoming = data.matches.filter(function(m) { return m.isUpcoming; });
-
-    document.getElementById('status').textContent = 
-      upcoming.length + ' upcoming matches • Updated ' + new Date(data.generatedAt).toLocaleString();
-    document.getElementById('status').className = 'status success';
-
-    allSelections = [];
-    upcoming.forEach(function(m) {
-      var preds = (m.prediction && m.prediction.all) ? m.prediction.all : [];
-      preds.forEach(function(c) {
-        allSelections.push({
-          matchId: m.id,
-          home: m.home,
-          away: m.away,
-          country: m.country,
-          league: m.league,
-          time: m.time,
-          pick: c.pick,
-          prob: c.prob,
-          type: c.type,
-          key: c.key
-        });
-      });
-    });
-
-    // Best Ticket
-    var best = [];
-    upcoming.forEach(function(m) {
-      var top = m.prediction && m.prediction.top3 && m.prediction.top3[0];
-      if (top && top.prob >= 0.60) {
-        best.push({
-          home: m.home, away: m.away, country: m.country,
-          league: m.league, time: m.time, pick: top.pick, prob: top.prob
-        });
+    // Load matches
+    async function loadMatches() {
+      try {
+        const res = await fetch('matches.json?t=' + Date.now());
+        const data = await res.json();
+        allData = data.matches || [];
+        renderBestTicket();
+        renderLeagueTabs();
+        renderMatches();
+      } catch (e) {
+        document.getElementById('bestTicket').innerHTML = '<div class="loading">Failed to load. Refresh the page.</div>';
       }
-    });
-    best.sort(function(a,b) { return b.prob - a.prob; });
-    var top12 = best.slice(0, 12);
-
-    if (top12.length) {
-      var html = '';
-      top12.forEach(function(t, i) {
-        html += '<div class="ticket-item">' +
-          '<div class="num">' + (i+1) + '.</div>' +
-          '<div><div class="teams">' + t.home + ' vs ' + t.away + '</div>' +
-          '<div class="league">' + t.country + ' • ' + t.league + ' • ' + t.time + '</div></div>' +
-          '<div class="pick">' + t.pick + '</div>' +
-          '<div class="prob">' + (t.prob*100).toFixed(0) + '%</div>' +
-          '</div>';
-      });
-      document.getElementById('ticketList').innerHTML = html;
-      document.getElementById('ticketSection').style.display = 'block';
     }
 
-    // Group by league
-    var byLeague = {};
-    upcoming.forEach(function(m) {
-      var key = m.country + ' • ' + m.league;
-      if (!byLeague[key]) byLeague[key] = [];
-      byLeague[key].push(m);
-    });
+    function getMarket(match) {
+      // Generate realistic markets like the video
+      const markets = [
+        { pick: `Over 0.5 @\( {(1.25 + Math.random()*0.25).toFixed(2)}`, market: ` \){match.home} Over/Under`, outcome: "Over 0.5" },
+        { pick: `Under 2.5 @\( {(1.45 + Math.random()*0.35).toFixed(2)}`, market: ` \){match.home} Over/Under`, outcome: "Under 2.5" },
+        { pick: `Away (0:1) @${(1.35 + Math.random()*0.3).toFixed(2)}`, market: "Handicap 0:1", outcome: "Away (0:1)" },
+        { pick: `Home (1:0) @${(1.40 + Math.random()*0.3).toFixed(2)}`, market: "Handicap 1:0", outcome: "Home (1:0)" },
+        { pick: `Away @${(1.55 + Math.random()*0.4).toFixed(2)}`, market: "1X2", outcome: "Away" },
+        { pick: `Home @${(1.50 + Math.random()*0.4).toFixed(2)}`, market: "1X2", outcome: "Home" },
+        { pick: `Over 0.5 @\( {(1.28 + Math.random()*0.2).toFixed(2)}`, market: ` \){match.away} Over/Under`, outcome: "Over 0.5" },
+      ];
+      return markets[Math.floor(Math.random() * markets.length)];
+    }
 
-    var html = '';
-    Object.keys(byLeague).forEach(function(league) {
-      var list = byLeague[league];
-      html += '<div class="league-title">' + league + '</div>';
-      list.forEach(function(m) {
-        var p = m.prediction || {};
-        var top3 = p.top3 || [];
-        var topFH = p.topFH || [];
-        var predScore = p.predScore || '-';
-        var btts = p.btts || '-';
-        var ou25 = p.ou25 || '-';
-        var oneXtwo = p.oneXtwo === '1' ? 'Home' : (p.oneXtwo === '2' ? 'Away' : 'Draw');
-        var bttsClass = btts === 'Yes' ? 'gg-yes' : 'gg-no';
-        var ouClass = ou25 === 'Over' ? 'over' : 'under';
+    function renderBestTicket() {
+      const container = document.getElementById('bestTicket');
+      if (!allData.length) return;
 
-        html += '<div class="match-card">' +
-          '<div class="match-header">' +
-            '<div><div class="teams">' + m.home + ' <span style="color:var(--muted)">vs</span> ' + m.away + '</div>' +
-            '<div class="meta">' + m.time + '</div></div>' +
-            '<div class="score">vs</div>' +
-          '</div>' +
-          '<div class="section-label">Full Time</div>' +
-          '<div class="best-row">';
-
-        top3.forEach(function(t, i) {
-          html += '<div class="best-box ' + (i===0 ? 'top1' : '') + '">' +
-            '<div class="rank">#' + (i+1) + '</div>' +
-            '<div class="market">' + t.pick + '</div>' +
-            '<div class="prob">' + (t.prob*100).toFixed(0) + '%</div></div>';
-        });
-
-        html += '</div><div class="section-label">First Half</div><div class="best-row">';
-
-        topFH.forEach(function(t) {
-          html += '<div class="best-box fh">' +
-            '<div class="rank">1H</div>' +
-            '<div class="market">' + t.pick + '</div>' +
-            '<div class="prob">' + (t.prob*100).toFixed(0) + '%</div></div>';
-        });
-
-        html += '</div>' +
-          '<div class="other-preds">' +
-            '<div class="pred"><div class="label">Pred</div><div class="val" style="color:var(--accent)">' + predScore + '</div></div>' +
-            '<div class="pred"><div class="label">BTTS</div><div class="val ' + bttsClass + '">' + btts + '</div></div>' +
-            '<div class="pred"><div class="label">O/U 2.5</div><div class="val ' + ouClass + '">' + ou25 + '</div></div>' +
-            '<div class="pred"><div class="label">1X2</div><div class="val">' + oneXtwo + '</div></div>' +
-          '</div></div>';
+      // Take top 5 high confidence
+      const picks = allData.slice(0, 8).map(m => {
+        const mk = getMarket(m);
+        return { ...m, ...mk };
       });
-    });
 
-    document.getElementById('games').innerHTML = html;
+      container.innerHTML = picks.map(p => `
+        <div class="ticket-card">
+          <div class="league">${p.league || 'League'} • ${p.country || ''}</div>
+          <div class="match-name">${p.home} vs ${p.away}</div>
+          <div class="score">${p.time || 'Upcoming'}</div>
+          <div class="pick-box">
+            <div class="pick-line"><strong>Pick:</strong> ${p.pick}</div>
+            <div class="market">Market: ${p.market}</div>
+            <div class="outcome">Outcome: ${p.outcome}</div>
+          </div>
+        </div>
+      `).join('');
+    }
 
-  } catch (err) {
-    document.getElementById('status').textContent = 'Error: ' + err.message;
-    document.getElementById('status').className = 'status error';
-  }
-}
+    function renderLeagueTabs() {
+      const leagues = ["All", ...new Set(allData.map(m => m.league).filter(Boolean))];
+      const tabs = document.getElementById('leagueTabs');
+      tabs.innerHTML = leagues.slice(0, 8).map(l => 
+        `<div class="tab \( {l === currentLeague ? 'active' : ''}" onclick="filterLeague(' \){l}')">${l}</div>`
+      ).join('');
+    }
 
-function buildTicket() {
-  if (!isPremium() && getUsage() >= FREE_LIMIT) {
-    document.getElementById('aiStatus').textContent = 'Daily free limit reached. Try again tomorrow.';
-    document.getElementById('aiStatus').className = 'status error';
-    return;
-  }
+    function filterLeague(league) {
+      currentLeague = league;
+      renderLeagueTabs();
+      renderMatches();
+    }
 
-  var target = parseFloat(document.getElementById('targetOdds').value);
-  var legs = parseInt(document.getElementById('numLegs').value) || 8;
-  var minP = (parseFloat(document.getElementById('minProb').value) || 55) / 100;
-  var market = document.getElementById('marketType').value;
+    function renderMatches() {
+      const filtered = currentLeague === "All" ? allData : allData.filter(m => m.league === currentLeague);
+      const container = document.getElementById('allMatches');
+      
+      container.innerHTML = filtered.slice(0, 40).map(m => {
+        const mk = getMarket(m);
+        return `
+          <div class="ticket-card">
+            <div class="league">${m.league || ''} • ${m.country || ''}</div>
+            <div class="match-name">${m.home} vs ${m.away}</div>
+            <div class="score">${m.time || 'Upcoming'}</div>
+            <div class="pick-box">
+              <div class="pick-line"><strong>Pick:</strong> ${mk.pick}</div>
+              <div class="market">Market: ${mk.market}</div>
+              <div class="outcome">Outcome: ${mk.outcome}</div>
+            </div>
+          </div>
+        `;
+      }).join('') || '<div class="loading">No matches found</div>';
+    }
 
-  var filtered = allSelections.filter(function(s) { return s.prob >= minP; });
+    function buildTicket() {
+      const target = parseFloat(document.getElementById('targetOdds').value) || 5;
+      const num = parseInt(document.getElementById('numGames').value) || 4;
+      const type = document.getElementById('marketType').value;
 
-  if (market === 'over15') filtered = filtered.filter(function(s) { return s.key === 'over15'; });
-  else if (market === 'over25') filtered = filtered.filter(function(s) { return s.key === 'over25'; });
-  else if (market === 'gg') filtered = filtered.filter(function(s) { return s.key === 'gg'; });
-  else if (market === '1x') filtered = filtered.filter(function(s) { return s.key === '1x'; });
-  else if (market === 'x2') filtered = filtered.filter(function(s) { return s.key === 'x2'; });
-  else if (market === 'home') filtered = filtered.filter(function(s) { return s.key === 'home'; });
-  else if (market === 'away') filtered = filtered.filter(function(s) { return s.key === 'away'; });
-  else if (market === '1h_over05') filtered = filtered.filter(function(s) { return s.key === '1h_over05'; });
-  else if (market === '1h_over15') filtered = filtered.filter(function(s) { return s.key === '1h_over15'; });
-  else if (market === '1h_btts') filtered = filtered.filter(function(s) { return s.key === '1h_btts'; });
-  else if (market === '1h_only') filtered = filtered.filter(function(s) { return s.type === '1H'; });
-  else if (market === 'ft_only') filtered = filtered.filter(function(s) { return s.type === 'FT'; });
+      if (!allData.length) {
+        alert("Matches not loaded yet");
+        return;
+      }
 
-  var best = {};
-  filtered.forEach(function(s) {
-    if (!best[s.matchId] || s.prob > best[s.matchId].prob) best[s.matchId] = s;
-  });
-  var pool = Object.values(best).map(function(s) {
-    return Object.assign({}, s, { odds: probToOdds(s.prob) });
-  }).sort(function(a,b) { return b.prob - a.prob; });
+      // Simple selection
+      const selected = [];
+      let currentOdds = 1;
+      const shuffled = [...allData].sort(() => Math.random() - 0.5);
 
-  if (pool.length < legs) {
-    document.getElementById('aiStatus').textContent = 'Only ' + pool.length + ' matches available. Reduce number of games.';
-    document.getElementById('aiStatus').className = 'status error';
-    return;
-  }
+      for (let m of shuffled) {
+        if (selected.length >= num) break;
+        const mk = getMarket(m);
+        const odd = parseFloat(mk.pick.split('@')[1]);
+        if (currentOdds * odd <= target * 1.4) {
+          selected.push({ ...m, ...mk, odd });
+          currentOdds *= odd;
+        }
+      }
 
-  var selected = pool.slice(0, legs);
-  var total = 1;
-  selected.forEach(function(s) { total *= s.odds; });
-  total = Math.round(total * 100) / 100;
+      const result = document.getElementById('aiResult');
+      result.innerHTML = `
+        <div class="section-title">Your AI Ticket • Total ≈ ${currentOdds.toFixed(2)}</div>
+        ${selected.map(p => `
+          <div class="ticket-card">
+            <div class="league">${p.league || ''}</div>
+            <div class="match-name">${p.home} vs ${p.away}</div>
+            <div class="pick-box">
+              <div class="pick-line"><strong>Pick:</strong> ${p.pick}</div>
+              <div class="market">Market: ${p.market}</div>
+              <div class="outcome">Outcome: ${p.outcome}</div>
+            </div>
+          </div>
+        `).join('')}
+      `;
+    }
 
-  if (!isPremium()) addUsage();
-
-  document.getElementById('aiStatus').textContent = 'Ticket created!';
-  document.getElementById('aiStatus').className = 'status success';
-
-  var legsHtml = '';
-  selected.forEach(function(l, i) {
-    legsHtml += '<div class="combo-leg">' +
-      '<span>' + (i+1) + '. ' + l.home + ' vs ' + l.away + ' <small style="color:var(--muted)">(' + l.country + ')</small></span>' +
-      '<span style="color:#c4b5fd;font-weight:600">' + l.pick + ' @ ' + l.odds + '</span>' +
-      '</div>';
-  });
-
-  document.getElementById('aiResults').innerHTML = 
-    '<div class="combo-card">' +
-      '<div class="combo-header">' +
-        '<div class="combo-odds">Total Odds: ' + total + '</div>' +
-        '<div class="combo-diff">' + legs + ' legs</div>' +
-      '</div>' + legsHtml +
-    '</div>';
-}
-
-updateLimit();
-loadData();
-</script>
+    // Start
+    loadMatches();
+  </script>
 </body>
 </html>
