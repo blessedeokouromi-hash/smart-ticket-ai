@@ -1,145 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-  <title>Smart Predict AI</title>
-  <style>
-    :root {
-      --bg: #0f172a;
-      --card: #1e293b;
-      --accent: #22c55e;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-      --border: #334155;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 70px; }
-    .header { background: linear-gradient(135deg, #16a34a, #15803d); padding: 16px; text-align: center; position: sticky; top: 0; z-index: 100; }
-    .header h1 { font-size: 1.35rem; font-weight: 700; }
-    .header p { font-size: 0.78rem; opacity: 0.9; margin-top: 3px; }
-    .container { max-width: 520px; margin: 0 auto; padding: 12px; }
-    
-    .ad-box { 
-      background: linear-gradient(90deg, #1e3a5f, #0f172a); 
-      border: 1px solid #38bdf8; 
-      border-radius: 10px; 
-      padding: 12px; 
-      margin: 14px 0; 
-      text-align: center;
-    }
-    .ad-box a { color: #38bdf8; font-size: 0.92rem; text-decoration: none; font-weight: 700; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Predict AI</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  body { background:#111827; color:#e5e7eb; padding-bottom:30px; }
+  .header { background:#1f2937; padding:16px; text-align:center; border-bottom:1px solid #374151; }
+  .header h1 { font-size:1.3rem; color:#fff; }
+  .header p { font-size:0.8rem; color:#9ca3af; margin-top:4px; }
+  .container { max-width:500px; margin:0 auto; padding:12px; }
 
-    .sticky-ad {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #16a34a;
-      color: white;
-      text-align: center;
-      padding: 12px;
-      font-weight: 700;
-      z-index: 999;
-      font-size: 0.95rem;
-    }
-    .sticky-ad a { color: white; text-decoration: none; }
+  .ad {
+    background:#1e3a5f;
+    border:1px solid #3b82f6;
+    border-radius:8px;
+    padding:12px;
+    text-align:center;
+    margin:14px 0;
+  }
+  .ad a { color:#60a5fa; font-weight:600; text-decoration:none; font-size:0.95rem; }
 
-    .section-title { font-size: 1.05rem; font-weight: 700; margin: 18px 0 10px; }
-    
-    .match-card {
-      background: var(--card);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 10px;
-      border: 1px solid var(--border);
-    }
-    .league { font-size: 0.72rem; color: var(--muted); margin-bottom: 3px; }
-    .teams { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
-    .time { font-size: 0.78rem; color: var(--muted); margin-bottom: 8px; }
-    
-    .preds {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    .pred-box {
-      background: #0f172a;
-      border-radius: 8px;
-      padding: 8px;
-      text-align: center;
-    }
-    .pred-label { font-size: 0.7rem; color: var(--muted); }
-    .pred-value { font-size: 0.88rem; font-weight: 700; margin-top: 2px; color: #4ade80; }
+  .section { margin:20px 0 10px; font-size:1.05rem; font-weight:600; color:#f3f4f6; }
 
-    .tabs { display: flex; gap: 8px; margin: 12px 0; overflow-x: auto; padding-bottom: 4px; }
-    .tab {
-      padding: 7px 14px;
-      background: var(--card);
-      border-radius: 20px;
-      font-size: 0.82rem;
-      white-space: nowrap;
-      border: 1px solid var(--border);
-      cursor: pointer;
-    }
-    .tab.active { background: var(--accent); color: #052e16; font-weight: 600; border-color: var(--accent); }
+  .card {
+    background:#1f2937;
+    border-radius:10px;
+    padding:14px;
+    margin-bottom:10px;
+    border:1px solid #374151;
+  }
+  .league { font-size:0.75rem; color:#9ca3af; margin-bottom:3px; }
+  .teams { font-size:0.95rem; font-weight:600; margin-bottom:4px; }
+  .time { font-size:0.8rem; color:#6b7280; margin-bottom:10px; }
 
-    .ai-box {
-      background: var(--card);
-      border-radius: 12px;
-      padding: 16px;
-      border: 1px solid var(--border);
-    }
-    .ai-box label { font-size: 0.85rem; color: var(--muted); display: block; margin-top: 10px; }
-    .ai-box input, .ai-box select {
-      width: 100%;
-      padding: 11px;
-      margin-top: 5px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: #0f172a;
-      color: white;
-      font-size: 0.95rem;
-    }
-    .btn {
-      background: var(--accent);
-      color: #052e16;
-      border: none;
-      padding: 13px;
-      border-radius: 8px;
-      font-weight: 700;
-      width: 100%;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 14px;
-    }
-    .loading { text-align: center; padding: 30px; color: var(--muted); }
-  </style>
+  .markets {
+    display:flex;
+    gap:8px;
+  }
+  .market-box {
+    flex:1;
+    background:#111827;
+    border-radius:7px;
+    padding:8px;
+    text-align:center;
+  }
+  .market-label { font-size:0.72rem; color:#9ca3af; }
+  .market-value { font-size:0.9rem; font-weight:600; color:#34d399; margin-top:3px; }
+
+  .ai-box {
+    background:#1f2937;
+    border-radius:10px;
+    padding:16px;
+    border:1px solid #374151;
+  }
+  .ai-box label { display:block; font-size:0.85rem; color:#9ca3af; margin:10px 0 4px; }
+  .ai-box input, .ai-box select {
+    width:100%;
+    padding:11px;
+    border-radius:7px;
+    border:1px solid #374151;
+    background:#111827;
+    color:#fff;
+    font-size:0.95rem;
+  }
+  .btn {
+    width:100%;
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:13px;
+    border-radius:8px;
+    font-weight:600;
+    font-size:1rem;
+    margin-top:14px;
+    cursor:pointer;
+  }
+
+  .tabs { display:flex; gap:8px; overflow-x:auto; margin:12px 0; }
+  .tab {
+    padding:7px 14px;
+    background:#1f2937;
+    border-radius:20px;
+    font-size:0.82rem;
+    white-space:nowrap;
+    border:1px solid #374151;
+  }
+  .tab.active { background:#2563eb; border-color:#2563eb; }
+</style>
 </head>
 <body>
   <div class="header">
     <h1>Smart Predict AI</h1>
-    <p>Free Daily Predictions • High Odds Markets</p>
+    <p>Free Daily Predictions</p>
   </div>
 
   <div class="container">
-    <!-- Top Ad -->
-    <div class="ad-box">
-      <a href="https://asiafilm.org/4/bd80344d93bc26083f8b20a55302a626" target="_blank">🔥 Claim Your Free Bonus Now</a>
+
+    <div class="ad">
+      <a href="https://asiafilm.org/4/bd80344d93bc26083f8b20a55302a626" target="_blank">Claim Free Bonus Now</a>
     </div>
 
-    <div class="section-title">🔥 Best Ticket Today</div>
-    <div id="bestTicket"><div class="loading">Loading best picks...</div></div>
+    <div class="section">Best Ticket Today</div>
+    <div id="bestTicket">Loading...</div>
 
-    <!-- Middle Ad -->
-    <div class="ad-box">
-      <a href="//rm358.com/4/12185322?var=smartpredict&ymid=click" target="_blank">⚡ Get Instant Cash Bonus</a>
-    </div>
-
-    <div class="section-title">🤖 AI Odds Builder</div>
+    <div class="section">AI Odds Builder</div>
     <div class="ai-box">
-      <label>Target Total Odds</label>
-      <input type="number" id="targetOdds" value="5" step="0.1">
+      <label>Target Odds</label>
+      <input type="number" id="targetOdds" value="5">
 
       <label>Number of Games</label>
       <select id="numGames">
@@ -149,184 +118,187 @@
         <option value="6">6 Games</option>
       </select>
 
-      <label>Preferred Market</label>
+      <label>Market Type</label>
       <select id="marketType">
-        <option value="mixed">Mixed (Recommended)</option>
+        <option value="mixed">Mixed</option>
         <option value="over05">Team Over 0.5</option>
-        <option value="handicap">Asian Handicap</option>
+        <option value="handicap">Handicap</option>
         <option value="1x2">Straight Win</option>
-        <option value="under25">Under 2.5</option>
       </select>
+
+      <!-- Ad right before Generate button -->
+      <div class="ad" style="margin:16px 0 8px;">
+        <a href="//rm358.com/4/12185322?var=smartpredict&ymid=click" target="_blank">Get Instant Bonus Before Generating</a>
+      </div>
 
       <button class="btn" onclick="buildTicket()">Generate Ticket</button>
     </div>
 
-    <div id="aiResult" style="margin-top:14px;"></div>
+    <div id="aiResult" style="margin-top:16px;"></div>
 
-    <div class="section-title">📅 All Matches Today</div>
+    <div class="section">All Matches</div>
     <div class="tabs" id="leagueTabs"></div>
-    <div id="allMatches"><div class="loading">Loading matches...</div></div>
+    <div id="allMatches">Loading matches...</div>
+
+    <div class="ad">
+      <a href="https://asiafilm.org/4/bd80344d93bc26083f8b20a55302a626" target="_blank">Exclusive Offer - Tap Here</a>
+    </div>
+
   </div>
 
-  <!-- Sticky Bottom Ad -->
-  <div class="sticky-ad">
-    <a href="https://asiafilm.org/4/bd80344d93bc26083f8b20a55302a626" target="_blank">🎁 Exclusive Offer - Tap Here</a>
-  </div>
+<script>
+  let allData = [];
+  let currentLeague = "All";
 
-  <script>
-    let allData = [];
-    let currentLeague = "All";
+  function getRandomOdd(min, max) {
+    return (Math.random() * (max - min) + min).toFixed(2);
+  }
 
-    function randomOdd(min, max) {
-      return (Math.random() * (max - min) + min).toFixed(2);
+  function createMarket(match) {
+    const options = [
+      { label: "Over 0.5", value: getRandomOdd(1.25, 1.48), type: match.home + " Over 0.5" },
+      { label: "Over 0.5", value: getRandomOdd(1.28, 1.50), type: match.away + " Over 0.5" },
+      { label: "Under 2.5", value: getRandomOdd(1.45, 1.90), type: "Under 2.5" },
+      { label: "Home 1:0", value: getRandomOdd(1.38, 1.75), type: "Handicap 1:0" },
+      { label: "Away 0:1", value: getRandomOdd(1.38, 1.75), type: "Handicap 0:1" },
+      { label: "Home", value: getRandomOdd(1.50, 2.20), type: "1X2" },
+      { label: "Away", value: getRandomOdd(1.55, 2.30), type: "1X2" }
+    ];
+    return options[Math.floor(Math.random() * options.length)];
+  }
+
+  async function loadData() {
+    try {
+      const res = await fetch("matches.json?t=" + Date.now());
+      const json = await res.json();
+      allData = json.matches || json || [];
+      showBest();
+      showTabs();
+      showMatches();
+    } catch(e) {
+      document.getElementById("bestTicket").innerHTML = "Failed to load. Refresh the page.";
     }
+  }
 
-    function getMarket(match) {
-      const type = Math.floor(Math.random() * 7);
-      switch(type) {
-        case 0:
-          return { label: "Over 0.5", value: randomOdd(1.22, 1.45), market: match.home + " Over 0.5" };
-        case 1:
-          return { label: "Over 0.5", value: randomOdd(1.25, 1.48), market: match.away + " Over 0.5" };
-        case 2:
-          return { label: "Under 2.5", value: randomOdd(1.40, 1.85), market: "Under 2.5" };
-        case 3:
-          return { label: "Home (1:0)", value: randomOdd(1.35, 1.70), market: "Handicap 1:0" };
-        case 4:
-          return { label: "Away (0:1)", value: randomOdd(1.35, 1.70), market: "Handicap 0:1" };
-        case 5:
-          return { label: "Home", value: randomOdd(1.45, 2.10), market: "1X2" };
-        default:
-          return { label: "Away", value: randomOdd(1.50, 2.20), market: "1X2" };
-      }
-    }
-
-    async function loadMatches() {
-      try {
-        const res = await fetch('matches.json?t=' + Date.now());
-        const data = await res.json();
-        allData = data.matches || data || [];
-        renderBestTicket();
-        renderLeagueTabs();
-        renderMatches();
-      } catch (e) {
-        document.getElementById('bestTicket').innerHTML = '<div class="loading">Failed to load matches. Pull to refresh.</div>';
-      }
-    }
-
-    function renderBestTicket() {
-      const container = document.getElementById('bestTicket');
-      if (!allData.length) return;
-
-      const picks = allData.slice(0, 6);
-      container.innerHTML = picks.map(m => {
-        const mk = getMarket(m);
-        return `
-          <div class="match-card">
-            <div class="league">${m.league || 'League'} ${m.country ? '• ' + m.country : ''}</div>
-            <div class="teams">${m.home} vs ${m.away}</div>
-            <div class="time">${m.time || m.date || 'Upcoming'}</div>
-            <div class="preds">
-              <div class="pred-box">
-                <div class="pred-label">${mk.market}</div>
-                <div class="pred-value">\( {mk.label} @ \){mk.value}</div>
-              </div>
-              <div class="pred-box">
-                <div class="pred-label">Confidence</div>
-                <div class="pred-value">${Math.floor(Math.random()*18 + 72)}%</div>
-              </div>
+  function showBest() {
+    const box = document.getElementById("bestTicket");
+    const list = allData.slice(0, 6);
+    let html = "";
+    list.forEach(function(m) {
+      const mk = createMarket(m);
+      html += `
+        <div class="card">
+          <div class="league">${m.league || ""} ${m.country ? "• " + m.country : ""}</div>
+          <div class="teams">${m.home} vs ${m.away}</div>
+          <div class="time">${m.time || "Upcoming"}</div>
+          <div class="markets">
+            <div class="market-box">
+              <div class="market-label">${mk.type}</div>
+              <div class="market-value">\( {mk.label} @ \){mk.value}</div>
+            </div>
+            <div class="market-box">
+              <div class="market-label">Confidence</div>
+              <div class="market-value">${70 + Math.floor(Math.random()*20)}%</div>
             </div>
           </div>
-        `;
-      }).join('');
-    }
-
-    function renderLeagueTabs() {
-      const leagues = ["All", ...new Set(allData.map(m => m.league).filter(Boolean))];
-      document.getElementById('leagueTabs').innerHTML = leagues.slice(0, 9).map(l => 
-        `<div class="tab \( {l === currentLeague ? 'active' : ''}" onclick="filterLeague(' \){l}')">${l}</div>`
-      ).join('');
-    }
-
-    function filterLeague(league) {
-      currentLeague = league;
-      renderLeagueTabs();
-      renderMatches();
-    }
-
-    function renderMatches() {
-      const filtered = currentLeague === "All" ? allData : allData.filter(m => m.league === currentLeague);
-      const container = document.getElementById('allMatches');
-      
-      if (!filtered.length) {
-        container.innerHTML = '<div class="loading">No matches found</div>';
-        return;
-      }
-
-      container.innerHTML = filtered.map(m => {
-        const mk = getMarket(m);
-        return `
-          <div class="match-card">
-            <div class="league">${m.league || ''} ${m.country ? '• ' + m.country : ''}</div>
-            <div class="teams">${m.home} vs ${m.away}</div>
-            <div class="time">${m.time || m.date || 'Upcoming'}</div>
-            <div class="preds">
-              <div class="pred-box">
-                <div class="pred-label">${mk.market}</div>
-                <div class="pred-value">\( {mk.label} @ \){mk.value}</div>
-              </div>
-              <div class="pred-box">
-                <div class="pred-label">Confidence</div>
-                <div class="pred-value">${Math.floor(Math.random()*18 + 70)}%</div>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function buildTicket() {
-      const target = parseFloat(document.getElementById('targetOdds').value) || 5;
-      const num = parseInt(document.getElementById('numGames').value) || 4;
-
-      if (!allData.length) return alert("Matches not loaded yet");
-
-      const selected = [];
-      let total = 1;
-      const shuffled = [...allData].sort(() => 0.5 - Math.random());
-
-      for (let m of shuffled) {
-        if (selected.length >= num) break;
-        const mk = getMarket(m);
-        const odd = parseFloat(mk.value);
-        if (total * odd <= target * 1.35) {
-          selected.push({ ...m, ...mk, odd });
-          total *= odd;
-        }
-      }
-
-      document.getElementById('aiResult').innerHTML = `
-        <div class="section-title">Your AI Ticket • ≈ ${total.toFixed(2)}</div>
-        ${selected.map(p => `
-          <div class="match-card">
-            <div class="league">${p.league || ''}</div>
-            <div class="teams">${p.home} vs ${p.away}</div>
-            <div class="preds">
-              <div class="pred-box">
-                <div class="pred-label">${p.market}</div>
-                <div class="pred-value">\( {p.label} @ \){p.value}</div>
-              </div>
-              <div class="pred-box">
-                <div class="pred-label">Odds</div>
-                <div class="pred-value">${p.value}</div>
-              </div>
-            </div>
-          </div>
-        `).join('')}
+        </div>
       `;
+    });
+    box.innerHTML = html;
+  }
+
+  function showTabs() {
+    const leagues = ["All"];
+    allData.forEach(function(m) {
+      if (m.league && leagues.indexOf(m.league) === -1) leagues.push(m.league);
+    });
+    let html = "";
+    leagues.slice(0,8).forEach(function(l) {
+      html += `<div class="tab \( {l===currentLeague?"active":""}" onclick="filterLeague(' \){l}')">${l}</div>`;
+    });
+    document.getElementById("leagueTabs").innerHTML = html;
+  }
+
+  function filterLeague(l) {
+    currentLeague = l;
+    showTabs();
+    showMatches();
+  }
+
+  function showMatches() {
+    const list = currentLeague === "All" ? allData : allData.filter(function(m){ return m.league === currentLeague; });
+    const box = document.getElementById("allMatches");
+    if (list.length === 0) {
+      box.innerHTML = "No matches found";
+      return;
+    }
+    let html = "";
+    list.forEach(function(m) {
+      const mk = createMarket(m);
+      html += `
+        <div class="card">
+          <div class="league">${m.league || ""} ${m.country ? "• " + m.country : ""}</div>
+          <div class="teams">${m.home} vs ${m.away}</div>
+          <div class="time">${m.time || "Upcoming"}</div>
+          <div class="markets">
+            <div class="market-box">
+              <div class="market-label">${mk.type}</div>
+              <div class="market-value">\( {mk.label} @ \){mk.value}</div>
+            </div>
+            <div class="market-box">
+              <div class="market-label">Confidence</div>
+              <div class="market-value">${70 + Math.floor(Math.random()*20)}%</div>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    box.innerHTML = html;
+  }
+
+  function buildTicket() {
+    const target = parseFloat(document.getElementById("targetOdds").value) || 5;
+    const num = parseInt(document.getElementById("numGames").value) || 4;
+    if (allData.length === 0) return alert("Matches not loaded");
+
+    const selected = [];
+    let total = 1;
+    const shuffled = allData.slice().sort(function(){ return 0.5 - Math.random(); });
+
+    for (let i=0; i<shuffled.length; i++) {
+      if (selected.length >= num) break;
+      const m = shuffled[i];
+      const mk = createMarket(m);
+      const odd = parseFloat(mk.value);
+      if (total * odd <= target * 1.4) {
+        selected.push({match: m, market: mk, odd: odd});
+        total *= odd;
+      }
     }
 
-    loadMatches();
-  </script>
+    let html = `<div class="section">Your Ticket • Total ${total.toFixed(2)}</div>`;
+    selected.forEach(function(item) {
+      html += `
+        <div class="card">
+          <div class="league">${item.match.league || ""}</div>
+          <div class="teams">${item.match.home} vs ${item.match.away}</div>
+          <div class="markets">
+            <div class="market-box">
+              <div class="market-label">${item.market.type}</div>
+              <div class="market-value">\( {item.market.label} @ \){item.market.value}</div>
+            </div>
+            <div class="market-box">
+              <div class="market-label">Odds</div>
+              <div class="market-value">${item.market.value}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    document.getElementById("aiResult").innerHTML = html;
+  }
+
+  loadData();
+</script>
 </body>
 </html>
