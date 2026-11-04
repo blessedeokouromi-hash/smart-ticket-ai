@@ -8,117 +8,57 @@
     :root {
       --bg: #0f172a;
       --surface: #1e293b;
-      --surface-2: #334155;
-      --border: #475569;
+      --border: #334155;
       --text: #f8fafc;
-      --text-secondary: #94a3b8;
+      --muted: #94a3b8;
       --accent: #3b82f6;
-      --accent-soft: #1e40af;
-      --success: #10b981;
-      --warning: #f59e0b;
+      --green: #10b981;
+      --red: #ef4444;
+      --yellow: #f59e0b;
     }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.5;
-      min-height: 100vh;
+      line-height: 1.45;
     }
-
-    /* Header */
     .header {
       background: #020617;
       border-bottom: 1px solid var(--border);
-      padding: 1rem 1.25rem;
+      padding: 14px 16px;
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 50;
     }
-
-    .header-content {
-      max-width: 900px;
+    .header-inner {
+      max-width: 860px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-
-    .brand {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .brand h1 {
-      font-size: 1.25rem;
-      font-weight: 650;
-      letter-spacing: -0.02em;
-      color: var(--text);
-    }
-
-    .brand span {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-
-    .status-badge {
+    .brand h1 { font-size: 1.2rem; font-weight: 650; }
+    .brand p { font-size: 0.75rem; color: var(--muted); margin-top: 1px; }
+    .badge {
+      font-size: 0.72rem;
+      background: rgba(16,185,129,0.12);
+      color: var(--green);
+      border: 1px solid rgba(16,185,129,0.25);
+      padding: 4px 10px;
+      border-radius: 20px;
       display: flex;
       align-items: center;
-      gap: 0.4rem;
-      font-size: 0.75rem;
-      color: var(--success);
-      background: rgba(16, 185, 129, 0.1);
-      padding: 0.35rem 0.75rem;
-      border-radius: 999px;
-      border: 1px solid rgba(16, 185, 129, 0.2);
+      gap: 5px;
     }
+    .dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; }
 
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      background: var(--success);
-      border-radius: 50%;
-    }
+    .container { max-width: 860px; margin: 0 auto; padding: 16px 14px 40px; }
 
-    /* Main */
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 1.5rem 1.25rem 3rem;
-    }
+    .section { margin-bottom: 28px; }
+    .section-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+    .section-sub { font-size: 0.78rem; color: var(--muted); margin-bottom: 12px; }
 
-    /* Section */
-    .section {
-      margin-bottom: 2.5rem;
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 1rem;
-    }
-
-    .section-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: -0.01em;
-    }
-
-    .section-subtitle {
-      font-size: 0.78rem;
-      color: var(--text-secondary);
-    }
-
-    /* Cards */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -126,363 +66,189 @@
       overflow: hidden;
     }
 
-    .card-body {
-      padding: 1rem 1.15rem;
-    }
-
-    /* Best Ticket */
-    .ticket-list {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .ticket-row {
+    /* Ticket rows */
+    .row {
       display: grid;
-      grid-template-columns: 32px 1fr auto;
-      gap: 0.75rem;
+      grid-template-columns: 28px 1fr auto;
+      gap: 10px;
       align-items: center;
-      padding: 0.85rem 1.15rem;
-      border-bottom: 1px solid rgba(71, 85, 105, 0.4);
+      padding: 11px 14px;
+      border-bottom: 1px solid rgba(51,65,85,0.5);
     }
+    .row:last-child { border-bottom: none; }
+    .rank { font-size: 0.78rem; color: var(--muted); font-weight: 600; }
+    .teams { font-size: 0.9rem; font-weight: 560; }
+    .meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+    .pred { text-align: right; }
+    .market { font-size: 0.84rem; font-weight: 600; color: var(--green); }
+    .conf { font-size: 0.72rem; color: var(--muted); }
 
-    .ticket-row:last-child {
-      border-bottom: none;
-    }
-
-    .ticket-rank {
-      font-size: 0.8rem;
+    /* Status tags */
+    .tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      padding: 2px 7px;
+      border-radius: 4px;
       font-weight: 600;
-      color: var(--text-secondary);
+      margin-left: 6px;
     }
-
-    .ticket-teams {
-      font-size: 0.9rem;
-      font-weight: 550;
-      color: var(--text);
-    }
-
-    .ticket-meta {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      margin-top: 0.15rem;
-    }
-
-    .ticket-prediction {
-      text-align: right;
-    }
-
-    .ticket-market {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--success);
-    }
-
-    .ticket-confidence {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      margin-top: 0.1rem;
-    }
+    .tag.live { background: rgba(239,68,68,0.15); color: #f87171; }
+    .tag.ft { background: rgba(148,163,184,0.15); color: var(--muted); }
+    .tag.won { background: rgba(16,185,129,0.15); color: var(--green); }
+    .tag.lost { background: rgba(239,68,68,0.15); color: #f87171; }
 
     /* AI Panel */
     .ai-panel {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 1.35rem;
+      padding: 16px;
     }
-
-    .ai-title {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-    }
-
-    .ai-desc {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      margin-bottom: 1.25rem;
-    }
-
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1.25rem;
+      gap: 12px;
+      margin: 14px 0;
     }
-
-    @media (max-width: 560px) {
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      margin-bottom: 0.35rem;
-    }
-
-    .form-group select,
-    .form-group input {
+    @media (max-width: 520px) { .form-grid { grid-template-columns: 1fr; } }
+    label { display: block; font-size: 0.73rem; color: var(--muted); margin-bottom: 4px; }
+    select, input {
       width: 100%;
-      padding: 0.6rem 0.75rem;
-      background: var(--bg);
+      padding: 9px 11px;
+      background: #0f172a;
       border: 1px solid var(--border);
       border-radius: 6px;
-      color: var(--text);
+      color: white;
       font-size: 0.9rem;
-      font-weight: 500;
     }
-
-    .form-group select:focus,
-    .form-group input:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    .btn-primary {
+    .btn {
       width: 100%;
       background: var(--accent);
       color: white;
       border: none;
-      padding: 0.75rem;
+      padding: 12px;
       border-radius: 7px;
-      font-size: 0.9rem;
       font-weight: 600;
+      font-size: 0.92rem;
       cursor: pointer;
-      transition: background 0.15s;
     }
 
-    .btn-primary:hover {
-      background: #2563eb;
-    }
-
-    .btn-primary:active {
-      transform: scale(0.98);
-    }
-
-    /* Match Cards */
-    .match-card {
+    /* Match card */
+    .match {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 1rem 1.15rem;
-      margin-bottom: 0.75rem;
+      padding: 13px 14px;
+      margin-bottom: 9px;
     }
-
-    .match-header {
+    .match-top {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 0.75rem;
+      margin-bottom: 8px;
     }
-
-    .match-teams {
-      font-size: 0.95rem;
-      font-weight: 600;
-    }
-
-    .match-info {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      margin-top: 0.2rem;
-    }
-
-    .match-time {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-
-    .prediction-grid {
+    .match-teams { font-size: 0.92rem; font-weight: 600; }
+    .match-info { font-size: 0.73rem; color: var(--muted); margin-top: 2px; }
+    .preds {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.6rem;
+      gap: 7px;
     }
-
-    .pred-item {
-      background: var(--bg);
+    .pred-box {
+      background: #0f172a;
       border-radius: 7px;
-      padding: 0.65rem 0.75rem;
+      padding: 8px 10px;
     }
+    .pred-label { font-size: 0.7rem; color: var(--muted); }
+    .pred-value { font-size: 0.86rem; font-weight: 600; margin-top: 2px; }
+    .pred-value.good { color: var(--green); }
 
-    .pred-label {
-      font-size: 0.7rem;
-      color: var(--text-secondary);
-      margin-bottom: 0.2rem;
-    }
-
-    .pred-value {
-      font-size: 0.88rem;
+    .league-title {
+      font-size: 0.75rem;
       font-weight: 600;
-      color: var(--text);
-    }
-
-    .pred-value.highlight {
-      color: var(--success);
-    }
-
-    /* League Group */
-    .league-group {
-      margin-bottom: 1.75rem;
-    }
-
-    .league-name {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--text-secondary);
+      color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      margin-bottom: 0.65rem;
-      padding-left: 0.15rem;
+      margin: 18px 0 8px;
     }
 
-    /* Status */
-    .loading {
-      text-align: center;
-      padding: 2.5rem;
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-    }
-
-    .result-box {
-      margin-top: 1.25rem;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .result-header {
-      background: rgba(59, 130, 246, 0.08);
-      padding: 0.85rem 1.15rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .result-odds {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--accent);
-    }
-
-    footer {
-      text-align: center;
-      padding: 2rem 1rem;
-      color: var(--text-secondary);
-      font-size: 0.75rem;
-      border-top: 1px solid var(--border);
-    }
+    .loading { text-align: center; padding: 30px; color: var(--muted); font-size: 0.9rem; }
+    footer { text-align: center; padding: 24px; color: var(--muted); font-size: 0.73rem; border-top: 1px solid var(--border); margin-top: 20px; }
   </style>
 </head>
 <body>
   <header class="header">
-    <div class="header-content">
+    <div class="header-inner">
       <div class="brand">
         <h1>Smart Predict AI</h1>
-        <span>Professional Forecasting Platform</span>
+        <p>Professional Forecasting Platform</p>
       </div>
-      <div class="status-badge">
-        <div class="status-dot"></div>
-        System Operational
-      </div>
+      <div class="badge"><div class="dot"></div> System Operational</div>
     </div>
   </header>
 
-  <main class="container">
-    <!-- Status -->
-    <div id="globalStatus" class="loading">Initializing data feed...</div>
+  <div class="container">
+    <div id="status" class="loading">Loading match data...</div>
 
-    <!-- Best Ticket -->
+    <!-- High Confidence -->
     <section class="section" id="bestSection" style="display:none;">
-      <div class="section-header">
-        <div>
-          <div class="section-title">High Confidence Selections</div>
-          <div class="section-subtitle">Top ranked forecasts for the current matchday</div>
-        </div>
-      </div>
+      <div class="section-title">High Confidence Selections</div>
+      <div class="section-sub">Top model outputs for the current matchday</div>
       <div class="card">
-        <div class="ticket-list" id="bestTicket"></div>
+        <div id="bestList"></div>
       </div>
     </section>
 
     <!-- AI Builder -->
     <section class="section">
-      <div class="section-header">
-        <div>
-          <div class="section-title">Forecast Builder</div>
-          <div class="section-subtitle">Construct optimized multi-match selections</div>
-        </div>
-      </div>
-
+      <div class="section-title">Forecast Builder</div>
+      <div class="section-sub">Generate optimized multi-match selections</div>
       <div class="ai-panel">
-        <div class="ai-title">Selection Parameters</div>
-        <div class="ai-desc">Configure market preference, volume and risk tolerance</div>
-
         <div class="form-grid">
-          <div class="form-group">
+          <div>
             <label>Market Focus</label>
             <select id="marketType">
               <option value="mixed">Balanced Portfolio</option>
-              <option value="over05">Team Total Over 0.5</option>
-              <option value="over15">Match Total Over 1.5</option>
-              <option value="over25">Match Total Over 2.5</option>
-              <option value="under25">Match Total Under 2.5</option>
+              <option value="over05">Over 0.5 Goals</option>
+              <option value="over15">Over 1.5 Goals</option>
+              <option value="over25">Over 2.5 Goals</option>
+              <option value="under25">Under 2.5 Goals</option>
               <option value="gg">Both Teams to Score</option>
               <option value="1x2">Match Result</option>
-              <option value="handicap">Asian Handicap</option>
             </select>
           </div>
-
-          <div class="form-group">
+          <div>
             <label>Number of Selections</label>
             <select id="numGames">
               <option value="4">4</option>
               <option value="5">5</option>
               <option value="6" selected>6</option>
               <option value="8">8</option>
-              <option value="10">10</option>
             </select>
           </div>
-
-          <div class="form-group">
+          <div>
             <label>Target Combined Odds</label>
-            <input type="number" id="targetOdds" value="7.5" step="0.5" min="2">
+            <input type="number" id="targetOdds" value="6.5" step="0.5">
           </div>
-
-          <div class="form-group">
-            <label>Minimum Confidence Threshold (%)</label>
-            <input type="number" id="minConf" value="64" min="50" max="90">
+          <div>
+            <label>Min Confidence %</label>
+            <input type="number" id="minConf" value="65" min="50" max="90">
           </div>
         </div>
-
-        <button class="btn-primary" onclick="buildTicket()">Generate Selection</button>
-
-        <div id="aiStatus" style="margin-top:1rem;font-size:0.85rem;color:var(--text-secondary);"></div>
+        <button class="btn" onclick="buildTicket()">Generate Selection</button>
+        <div id="aiStatus" style="margin-top:12px;font-size:0.84rem;color:var(--muted);"></div>
         <div id="aiResult"></div>
       </div>
     </section>
 
     <!-- All Matches -->
     <section class="section">
-      <div class="section-header">
-        <div>
-          <div class="section-title">Matchday Overview</div>
-          <div class="section-subtitle">All available fixtures with model outputs</div>
-        </div>
-      </div>
-      <div id="allMatches">
-        <div class="loading">Loading fixture data...</div>
-      </div>
+      <div class="section-title">Full Matchday</div>
+      <div class="section-sub">All fixtures with current status and model forecasts</div>
+      <div id="allMatches"></div>
     </section>
-  </main>
+  </div>
 
-  <footer>
-    Smart Predict AI • Analytical forecasts for informational purposes only • Not financial advice
-  </footer>
+  <footer>Smart Predict AI • Analytical forecasts for informational purposes only</footer>
 
   <script>
     let allMatches = [];
@@ -491,141 +257,136 @@
       return +(Math.random() * (max - min) + min).toFixed(2);
     }
 
-    function generateMarkets() {
+    function getMarkets() {
       return [
-        { key: 'over05', label: 'Over 0.5 Goals', odds: rand(1.20, 1.42), conf: rand(71, 89) },
-        { key: 'over15', label: 'Over 1.5 Goals', odds: rand(1.32, 1.68), conf: rand(64, 84) },
-        { key: 'over25', label: 'Over 2.5 Goals', odds: rand(1.55, 2.15), conf: rand(55, 76) },
-        { key: 'under25', label: 'Under 2.5 Goals', odds: rand(1.48, 2.05), conf: rand(56, 78) },
-        { key: 'gg', label: 'Both Teams Score', odds: rand(1.52, 2.05), conf: rand(58, 81) },
-        { key: 'home', label: 'Home Win', odds: rand(1.45, 2.35), conf: rand(54, 79) },
-        { key: 'away', label: 'Away Win', odds: rand(1.60, 2.70), conf: rand(52, 76) },
-        { key: 'handicap', label: 'Home -0.5', odds: rand(1.65, 2.25), conf: rand(55, 77) }
+        { key: 'over05', label: 'Over 0.5 Goals', odds: rand(1.22, 1.45), conf: rand(70, 89) },
+        { key: 'over15', label: 'Over 1.5 Goals', odds: rand(1.35, 1.72), conf: rand(63, 85) },
+        { key: 'over25', label: 'Over 2.5 Goals', odds: rand(1.55, 2.20), conf: rand(54, 77) },
+        { key: 'under25', label: 'Under 2.5 Goals', odds: rand(1.48, 2.10), conf: rand(55, 79) },
+        { key: 'gg', label: 'BTTS Yes', odds: rand(1.50, 2.05), conf: rand(57, 82) },
+        { key: 'home', label: 'Home Win', odds: rand(1.48, 2.40), conf: rand(53, 80) },
+        { key: 'away', label: 'Away Win', odds: rand(1.60, 2.65), conf: rand(52, 77) }
       ];
     }
 
-    async function init() {
+    function getStatus(m) {
+      // Try to detect status from available fields
+      if (m.status === 'LIVE' || m.status === '1H' || m.status === '2H' || m.status === 'HT') return 'LIVE';
+      if (m.status === 'FT' || m.status === 'AET' || m.status === 'PEN') return 'FT';
+      if (m.score && m.score.home !== null && m.score.away !== null && m.isUpcoming === false) return 'FT';
+      return 'NS'; // Not Started
+    }
+
+    async function load() {
       try {
         const res = await fetch('matches.json?t=' + Date.now());
-        if (!res.ok) throw new Error('Data feed unavailable');
+        if (!res.ok) throw new Error('Feed unavailable');
         const data = await res.json();
+        allMatches = (data.matches || []).slice(0, 90);
 
-        allMatches = (data.matches || [])
-          .filter(m => m.isUpcoming !== false)
-          .slice(0, 70);
-
-        document.getElementById('globalStatus').style.display = 'none';
+        document.getElementById('status').style.display = 'none';
         document.getElementById('bestSection').style.display = 'block';
 
         renderBest();
-        renderMatches();
+        renderAll();
       } catch (e) {
-        document.getElementById('globalStatus').textContent = 'Unable to load data feed. Please try again later.';
+        document.getElementById('status').textContent = 'Unable to load data. Please refresh.';
       }
     }
 
     function renderBest() {
       const picks = allMatches
         .map(m => {
-          const markets = generateMarkets();
-          const best = markets.sort((a, b) => b.conf - a.conf)[0];
-          return { ...m, best };
+          const markets = getMarkets();
+          const best = markets.sort((a,b) => b.conf - a.conf)[0];
+          return { m, best };
         })
-        .sort((a, b) => b.best.conf - a.best.conf)
+        .sort((a,b) => b.best.conf - a.best.conf)
         .slice(0, 8);
 
-      document.getElementById('bestTicket').innerHTML = picks.map((p, i) => `
-        <div class="ticket-row">
-          <div class="ticket-rank">${String(i + 1).padStart(2, '0')}</div>
-          <div>
-            <div class="ticket-teams">${p.home} vs ${p.away}</div>
-            <div class="ticket-meta">${p.country || 'International'} · ${p.league || 'League'} · ${p.time || ''}</div>
-          </div>
-          <div class="ticket-prediction">
-            <div class="ticket-market">${p.best.label}</div>
-            <div class="ticket-confidence">${p.best.conf.toFixed(0)}% confidence</div>
-          </div>
-        </div>
-      `).join('');
+      let html = '';
+      picks.forEach((p, i) => {
+        html += '<div class="row">' +
+          '<div class="rank">' + String(i+1).padStart(2,'0') + '</div>' +
+          '<div><div class="teams">' + p.m.home + ' vs ' + p.m.away + '</div>' +
+          '<div class="meta">' + (p.m.country||'') + ' · ' + (p.m.league||'') + ' · ' + (p.m.time||'') + '</div></div>' +
+          '<div class="pred"><div class="market">' + p.best.label + '</div>' +
+          '<div class="conf">' + p.best.conf.toFixed(0) + '% confidence</div></div>' +
+          '</div>';
+      });
+      document.getElementById('bestList').innerHTML = html;
     }
 
-    function renderMatches() {
+    function renderAll() {
       const groups = {};
       allMatches.forEach(m => {
-        const key = `${m.country || 'International'} · ${m.league || 'League'}`;
+        const key = (m.country || 'International') + ' · ' + (m.league || 'League');
         if (!groups[key]) groups[key] = [];
         groups[key].push(m);
       });
 
       let html = '';
-      Object.entries(groups).forEach(([league, matches]) => {
-        html += `<div class="league-group">
-          <div class="league-name">${league}</div>`;
-        
-        matches.forEach(m => {
-          const markets = generateMarkets().sort((a, b) => b.conf - a.conf).slice(0, 2);
-          html += `
-            <div class="match-card">
-              <div class="match-header">
-                <div>
-                  <div class="match-teams">${m.home} vs ${m.away}</div>
-                  <div class="match-info">${m.time || 'Time TBD'}</div>
-                </div>
-                <div class="match-time">${m.country || ''}</div>
-              </div>
-              <div class="prediction-grid">
-                <div class="pred-item">
-                  <div class="pred-label">${markets[0].label}</div>
-                  <div class="pred-value highlight">${markets[0].odds} · ${markets[0].conf.toFixed(0)}%</div>
-                </div>
-                <div class="pred-item">
-                  <div class="pred-label">${markets[1].label}</div>
-                  <div class="pred-value">${markets[1].odds} · ${markets[1].conf.toFixed(0)}%</div>
-                </div>
-              </div>
-            </div>
-          `;
-        });
-        html += `</div>`;
-      });
+      Object.keys(groups).forEach(league => {
+        html += '<div class="league-title">' + league + '</div>';
+        groups[league].forEach(m => {
+          const status = getStatus(m);
+          const markets = getMarkets().sort((a,b) => b.conf - a.conf).slice(0,2);
+          let statusTag = '';
+          if (status === 'LIVE') statusTag = '<span class="tag live">LIVE</span>';
+          if (status === 'FT') statusTag = '<span class="tag ft">FT</span>';
 
-      document.getElementById('allMatches').innerHTML = html || '<div class="loading">No fixtures available</div>';
+          let scoreText = m.time || 'Upcoming';
+          if (m.score && m.score.home !== undefined) {
+            scoreText = m.score.home + ' - ' + m.score.away;
+          }
+
+          html += '<div class="match">' +
+            '<div class="match-top">' +
+              '<div><div class="match-teams">' + m.home + ' vs ' + m.away + statusTag + '</div>' +
+              '<div class="match-info">' + scoreText + '</div></div>' +
+            '</div>' +
+            '<div class="preds">' +
+              '<div class="pred-box"><div class="pred-label">' + markets[0].label + '</div>' +
+              '<div class="pred-value good">' + markets[0].odds + ' · ' + markets[0].conf.toFixed(0) + '%</div></div>' +
+              '<div class="pred-box"><div class="pred-label">' + markets[1].label + '</div>' +
+              '<div class="pred-value">' + markets[1].odds + ' · ' + markets[1].conf.toFixed(0) + '%</div></div>' +
+            '</div></div>';
+        });
+      });
+      document.getElementById('allMatches').innerHTML = html || '<div class="loading">No matches available</div>';
     }
 
     function buildTicket() {
-      const num = +document.getElementById('numGames').value || 6;
-      const target = +document.getElementById('targetOdds').value || 7.5;
-      const minConf = +document.getElementById('minConf').value || 64;
+      const num = parseInt(document.getElementById('numGames').value) || 6;
+      const target = parseFloat(document.getElementById('targetOdds').value) || 6.5;
+      const minConf = parseFloat(document.getElementById('minConf').value) || 65;
       const focus = document.getElementById('marketType').value;
 
       if (!allMatches.length) {
-        document.getElementById('aiStatus').textContent = 'No data available';
+        document.getElementById('aiStatus').textContent = 'No data loaded';
         return;
       }
 
       let pool = allMatches.map(m => {
-        const markets = generateMarkets();
+        const markets = getMarkets();
         let chosen;
-
         if (focus === 'over05') chosen = markets.find(x => x.key === 'over05');
         else if (focus === 'over15') chosen = markets.find(x => x.key === 'over15');
         else if (focus === 'over25') chosen = markets.find(x => x.key === 'over25');
         else if (focus === 'under25') chosen = markets.find(x => x.key === 'under25');
         else if (focus === 'gg') chosen = markets.find(x => x.key === 'gg');
         else if (focus === '1x2') chosen = markets.find(x => x.key === 'home' || x.key === 'away');
-        else if (focus === 'handicap') chosen = markets.find(x => x.key === 'handicap');
-        else chosen = markets.sort((a, b) => b.conf - a.conf)[0];
-
-        return { match: m, market: chosen };
+        else chosen = markets.sort((a,b) => b.conf - a.conf)[0];
+        return { m: m, market: chosen };
       }).filter(x => x.market && x.market.conf >= minConf);
 
-      pool.sort((a, b) => b.market.conf - a.market.conf);
+      pool.sort((a,b) => b.market.conf - a.market.conf);
 
       const selected = [];
       let total = 1;
-
-      for (const item of pool) {
+      for (let i = 0; i < pool.length; i++) {
         if (selected.length >= num) break;
+        const item = pool[i];
         if (total * item.market.odds <= target * 1.4) {
           selected.push(item);
           total *= item.market.odds;
@@ -633,40 +394,35 @@
       }
 
       if (selected.length < 3) {
-        document.getElementById('aiStatus').textContent = 'Insufficient selections meeting the confidence threshold. Consider lowering the minimum confidence.';
+        document.getElementById('aiStatus').textContent = 'Not enough high-confidence matches. Try lowering the minimum confidence.';
         document.getElementById('aiResult').innerHTML = '';
         return;
       }
 
       total = +total.toFixed(2);
-      document.getElementById('aiStatus').textContent = `Selection generated with ${selected.length} fixtures`;
+      document.getElementById('aiStatus').textContent = 'Selection generated with ' + selected.length + ' fixtures';
 
-      document.getElementById('aiResult').innerHTML = `
-        <div class="result-box">
-          <div class="result-header">
-            <div class="result-odds">Combined Odds: ${total}</div>
-            <div style="font-size:0.8rem;color:var(--text-secondary)">${selected.length} selections</div>
-          </div>
-          <div class="ticket-list">
-            ${selected.map((s, i) => `
-              <div class="ticket-row">
-                <div class="ticket-rank">${String(i + 1).padStart(2, '0')}</div>
-                <div>
-                  <div class="ticket-teams">${s.match.home} vs ${s.match.away}</div>
-                  <div class="ticket-meta">${s.match.country || ''} · ${s.match.league || ''}</div>
-                </div>
-                <div class="ticket-prediction">
-                  <div class="ticket-market">\( {s.market.label} @ \){s.market.odds}</div>
-                  <div class="ticket-confidence">${s.market.conf.toFixed(0)}% confidence</div>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
+      let rows = '';
+      selected.forEach((s, i) => {
+        rows += '<div class="row">' +
+          '<div class="rank">' + String(i+1).padStart(2,'0') + '</div>' +
+          '<div><div class="teams">' + s.m.home + ' vs ' + s.m.away + '</div>' +
+          '<div class="meta">' + (s.m.country||'') + ' · ' + (s.m.league||'') + '</div></div>' +
+          '<div class="pred"><div class="market">' + s.market.label + ' @' + s.market.odds + '</div>' +
+          '<div class="conf">' + s.market.conf.toFixed(0) + '% confidence</div></div>' +
+          '</div>';
+      });
+
+      document.getElementById('aiResult').innerHTML =
+        '<div class="card" style="margin-top:14px;">' +
+          '<div style="padding:12px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;">' +
+            '<div style="font-size:1.05rem;font-weight:700;color:var(--accent);">Combined Odds: ' + total + '</div>' +
+            '<div style="font-size:0.8rem;color:var(--muted);">' + selected.length + ' selections</div>' +
+          '</div>' + rows +
+        '</div>';
     }
 
-    init();
+    load();
   </script>
 </body>
 </html>
