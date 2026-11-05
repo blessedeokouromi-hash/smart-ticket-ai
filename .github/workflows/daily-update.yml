@@ -1,10 +1,9 @@
-name: Daily Matches Update
-permissions:
-  contents: write
+name: Update Matches Daily
+
 on:
   schedule:
-    - cron: '0 5 * * *'   # Runs every day at 5:00 AM UTC
-  workflow_dispatch:       # Allows manual run too
+    - cron: '0 5 * * *'   # Runs every day at 05:00 UTC
+  workflow_dispatch:       # Allows manual trigger
 
 jobs:
   update:
@@ -13,122 +12,82 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Fetch matches and generate predictions
+      - name: Fetch today's fixtures
         env:
-          API_KEY: ${{ secrets.API_SPORTS_KEY }}
+          API_KEY: ${{ secrets.API_FOOTBALL_KEY }}
         run: |
-          python3 - << 'EOF'
-          import urllib.request, json, os, math, hashlib
-          from datetime import datetime, timezone
+          python3 << 'EOF'
+          import requests, json, os
+          from datetime import datetime, timezone, timedelta
 
-          API_KEY = os.environ["API_KEY"]
+          API_KEY = os.environ["API_FOOTBALL_KEY"]
+          headers = {"x-apisports-key": API_KEY}
+
+          # Get today's date in UTC
           today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
+          print(f"Fetching fixtures for: {today}")
+
+          # Important leagues & competitions (you can add more)
+          # Champions League = 2, Europa League = 3, Premier League = 39, La Liga = 140, etc.
+          # We fetch by date first (better coverage)
+
           url = f"https://v3.football.api-sports.io/fixtures?date={today}"
-          req = urllib.request.Request(url, headers={"x-apisports-key": API_KEY})
-          with urllib.request.urlopen(req) as response:
-              data = json.loads(response.read().decode())
-
-          def hash_str(s):
-              return abs(hash(s)) % (10 ** 8)
-
-          def make_prediction(home, away):
-              h = hash_str(home + away)
-              a = hash_str(away + home + "x")
-              home_xg = (h % 22) / 10 + 1.05
-              away_xg = (a % 20) / 10 + 0.95
-              total = home_xg + away_xg
-              fh_home = home_xg * 0.43
-              fh_away = away_xg * 0.43
-              fh_total = fh_home + fh_away
-
-              p_home = 1 - math.exp(-home_xg)
-              p_away = 1 - math.exp(-away_xg)
-              btts = p_home * p_away
-              over15 = min(0.90, 1 - math.exp(-total) * (1 + total))
-              over25 = min(0.80, 1 - math.exp(-total) * (1 + total + total**2/2))
-              fh_over05 = min(0.88, 1 - math.exp(-fh_total))
-              fh_over15 = min(0.72, 1 - math.exp(-fh_total) * (1 + fh_total))
-              fh_btts = (1 - math.exp(-fh_home)) * (1 - math.exp(-fh_away))
-
-              p_home_win = max(0.20, min(0.60, 0.40 + (home_xg - away_xg) * 0.11))
-              p_away_win = max(0.20, min(0.60, 0.40 + (away_xg - home_xg) * 0.11))
-              p_draw = max(0.18, 1 - p_home_win - p_away_win)
-              dc1x = min(0.85, p_home_win + p_draw)
-              dcx2 = min(0.85, p_away_win + p_draw)
-
-              fh_h = max(0.18, min(0.55, 0.36 + (fh_home - fh_away) * 0.12))
-              fh_a = max(0.18, min(0.55, 0.36 + (fh_away - fh_home) * 0.12))
-              fh_d = max(0.22, 1 - fh_h - fh_a)
-              fh1x = min(0.82, fh_h + fh_d)
-              fhx2 = min(0.82, fh_a + fh_d)
-
-              candidates = [
-                  {"pick": "Over 1.5", "prob": over15, "type": "FT", "key": "over15"},
-                  {"pick": "Over 2.5", "prob": over25, "type": "FT", "key": "over25"},
-                  {"pick": "GG Yes", "prob": btts, "type": "FT", "key": "gg"},
-                  {"pick": "1X", "prob": dc1x, "type": "FT", "key": "1x"},
-                  {"pick": "X2", "prob": dcx2, "type": "FT", "key": "x2"},
-                  {"pick": "Home", "prob": p_home_win, "type": "FT", "key": "home"},
-                  {"pick": "Away", "prob": p_away_win, "type": "FT", "key": "away"},
-                  {"pick": "1H Over 0.5", "prob": fh_over05, "type": "1H", "key": "1h_over05"},
-                  {"pick": "1H Over 1.5", "prob": fh_over15, "type": "1H", "key": "1h_over15"},
-                  {"pick": "1H BTTS", "prob": fh_btts, "type": "1H", "key": "1h_btts"},
-                  {"pick": "1H 1X", "prob": fh1x, "type": "1H", "key": "1h_1x"},
-                  {"pick": "1H X2", "prob": fhx2, "type": "1H", "key": "1h_x2"},
-                  {"pick": "1H Home", "prob": fh_h, "type": "1H", "key": "1h_home"},
-                  {"pick": "1H Away", "prob": fh_a, "type": "1H", "key": "1h_away"},
-              ]
-              candidates.sort(key=lambda x: x["prob"], reverse=True)
-              return {
-                  "top3": candidates[:3],
-                  "topFH": [c for c in candidates if c["type"] == "1H"][:3],
-                  "all": candidates,
-                  "btts": "Yes" if btts > 0.52 else "No",
-                  "ou25": "Over" if over25 > 0.52 else "Under",
-                  "oneXtwo": "1" if p_home_win > p_away_win and p_home_win > p_draw else ("2" if p_away_win > p_draw else "X"),
-                  "predScore": f"{max(0, round(home_xg))}-{max(0, round(away_xg))}"
-              }
+          response = requests.get(url, headers=headers, timeout=30)
+          data = response.json()
 
           matches = []
-          for g in data.get("response", []):
-              home = g["teams"]["home"]["name"]
-              away = g["teams"]["away"]["name"]
-              status = g["fixture"]["status"]["short"]
-              matches.append({
-                  "id": g["fixture"]["id"],
-                  "home": home,
-                  "away": away,
-                  "country": g["league"].get("country", ""),
-                  "league": g["league"]["name"],
-                  "time": datetime.fromtimestamp(g["fixture"]["timestamp"], tz=timezone.utc).strftime("%H:%M"),
-                  "timestamp": g["fixture"]["timestamp"],
-                  "status": status,
-                  "isUpcoming": status in ["NS", "TBD", "SUSP"],
-                  "isLive": status in ["1H", "2H", "ET", "P", "LIVE"],
-                  "isFinished": status in ["FT", "AET", "PEN", "PST", "CANC", "ABD", "AWD", "WO"],
-                  "scoreH": g["goals"]["home"],
-                  "scoreA": g["goals"]["away"],
-                  "prediction": make_prediction(home, away)
-              })
+          if data.get("response"):
+              for item in data["response"]:
+                  fixture = item["fixture"]
+                  teams = item["teams"]
+                  league = item["league"]
+                  goals = item.get("goals", {})
 
-          result = {
+                  # Convert kickoff time to readable format
+                  timestamp = fixture["timestamp"]
+                  kickoff = datetime.fromtimestamp(timestamp, tz=timezone.utc)
+
+                  match = {
+                      "id": fixture["id"],
+                      "date": today,
+                      "time": kickoff.strftime("%H:%M"),
+                      "timestamp": timestamp,
+                      "home": teams["home"]["name"],
+                      "away": teams["away"]["name"],
+                      "country": league.get("country", ""),
+                      "league": league.get("name", ""),
+                      "league_id": league.get("id"),
+                      "status": fixture["status"]["short"],
+                      "isUpcoming": fixture["status"]["short"] in ["NS", "TBD", "PST"],
+                      "score": {
+                          "home": goals.get("home"),
+                          "away": goals.get("away")
+                      },
+                      "venue": fixture.get("venue", {}).get("name", "")
+                  }
+                  matches.append(match)
+
+          # Sort by kickoff time
+          matches.sort(key=lambda x: x["timestamp"])
+
+          output = {
               "generatedAt": datetime.now(timezone.utc).isoformat(),
               "date": today,
-              "totalMatches": len(matches),
-              "upcoming": sum(1 for m in matches if m["isUpcoming"]),
+              "total": len(matches),
               "matches": matches
           }
 
-          with open("matches.json", "w") as f:
-              json.dump(result, f, indent=2)
-          print(f"Generated {len(matches)} matches")
+          with open("matches.json", "w", encoding="utf-8") as f:
+              json.dump(output, f, indent=2, ensure_ascii=False)
+
+          print(f"Saved {len(matches)} matches for {today}")
           EOF
 
-      - name: Commit and push matches.json
+      - name: Commit and push
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add matches.json
-          git diff --quiet && git diff --staged --quiet || git commit -m "Daily update $(date +%Y-%m-%d)"
+          git diff --staged --quiet || git commit -m "Update matches for $(date +%Y-%m-%d)"
           git push
