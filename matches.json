@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-05T03:51:00.939116+00:00",
+  "generatedAt": "2026-11-05T05:55:16.539348+00:00",
   "date": "2026-11-05",
   "total": 152,
   "matches": [
@@ -251,11 +251,11 @@
       "country": "Costa-Rica",
       "league": "Primera División",
       "league_id": 162,
-      "status": "2H",
+      "status": "FT",
       "isUpcoming": false,
       "score": {
         "home": 1,
-        "away": 2
+        "away": 4
       }
     },
     {
@@ -268,11 +268,11 @@
       "country": "Mongolia",
       "league": "Premier League",
       "league_id": 764,
-      "status": "NS",
-      "isUpcoming": true,
+      "status": "HT",
+      "isUpcoming": false,
       "score": {
-        "home": null,
-        "away": null
+        "home": 1,
+        "away": 0
       }
     },
     {
